@@ -7,9 +7,12 @@
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+        <script>
+            var realRoot = "${realRoot}";
+        </script>
 
-        <link rel="stylesheet" href="/css/main.css">
-        <script src="/js/main.js"></script>
+        <link rel="stylesheet" href="${realRoot}css/main.css">
+        <script src="${realRoot}js/main.js"></script>
     </head>
     <body>
         <div id="template" style="display: none;">
@@ -118,7 +121,7 @@
             </div>
             <div>&nbsp;</div>
             <div class="row">
-                <form action="/" method="get">
+                <form action="" method="get">
                     <div class="col-md-3 input-group searchArea">
                         <input type="text" name="summoner" class="form-control" id="summonerInput" placeholder="Summoner">
                         <span class="input-group-btn">
