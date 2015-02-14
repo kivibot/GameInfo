@@ -100,8 +100,8 @@ public class GameInfoBackend {
         Spark.get("/", (req, res) -> {
             String summoner = req.queryParams("summoner");
             if (summoner != null) {
-                res.redirect("./" + summoner);
-                Spark.halt();
+                res.header("location", summoner);
+                Spark.halt(301);
             }
             Map<String, Object> attributes = new HashMap<>();
             attributes.put("autoFind", false);
@@ -112,8 +112,8 @@ public class GameInfoBackend {
             Map<String, Object> attributes = new HashMap<>();
             String summoner = req.queryParams("summoner");
             if (summoner != null) {
-                res.redirect("./" + summoner);
-                Spark.halt();
+                res.header("location", summoner);
+                Spark.halt(301);
             }
             summoner = req.params("summoner");
             if (summoner != null) {
