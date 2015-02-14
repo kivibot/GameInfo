@@ -110,7 +110,12 @@ public class GameInfoBackend {
         }, new FreeMarkerEngine());
         Spark.get("/:summoner", (req, res) -> {
             Map<String, Object> attributes = new HashMap<>();
-            String summoner = req.params("summoner");
+            String summoner = req.queryParams("summoner");
+            if (summoner != null) {
+                res.redirect("/" + summoner);
+                Spark.halt();
+            }
+            summoner = req.params("summoner");
             if (summoner != null) {
                 attributes.put("autoFind", true);
                 attributes.put("summoner", summoner);
