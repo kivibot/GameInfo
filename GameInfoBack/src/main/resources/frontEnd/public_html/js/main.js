@@ -79,13 +79,14 @@ $(document).ready(function () {
         lastRowT200 = false;
         lastRowT100 = false;
     }
-    var searching = false;
     function searchSummoner(name) {
-        searching = true;
+        localStorage.searchValue = name;
+        $("#summonerInput").val(localStorage.searchValue);
         $("#searchButton").attr("disabled", "disabled");
         $("#searchButtonImage").toggleClass("spinner");
         $("#searchButtonImage").toggleClass("glyphicon-refresh");
-        $("#searchButtonText").text("searching")
+        $("#searchButtonText").text("Searching")
+        searching = true;
         $.ajax("/" + name + "/curgame/").done(function (data) {
             console.log(data);
             $("#searchButton").addClass("btn-success");
@@ -102,28 +103,19 @@ $(document).ready(function () {
             }, 2000);
             showError(data.status, data.responseText);
         }).complete(function () {
+            searching = false;
             $("#searchButton").removeAttr("disabled");
             $("#searchButtonImage").toggleClass("spinner");
             $("#searchButtonImage").toggleClass("glyphicon-refresh");
-            $("#searchButtonText").text("search")
-            searching = false;
+            $("#searchButtonText").text("Search");
         });
-    }
-    function searchButtonAction(e) {
-        if (!searching) {
-            searchSummoner($("#summonerInput").val());
-        }
-        localStorage.searchValue = $("#summonerInput").val();
+        setTimeout(function () {
+            if (searching) {
+                $("#searchButtonText").text("Searching. Please be patient!");
+            }
+        }, 6000);
     }
     search = searchSummoner;
-//    $("#searchButton").click(searchButtonAction);
-//    $('#summonerInput').bind("enterKey", searchButtonAction);
-//    $('#summonerInput').keyup(function (e) {
-//        if (e.keyCode === 13)
-//        {
-//            $(this).trigger("enterKey");
-//        }
-//    });
     //searchSummoner("tuk1");
     if (localStorage.searchValue !== undefined) {
         $("#summonerInput").val(localStorage.searchValue);
