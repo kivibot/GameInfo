@@ -44,7 +44,7 @@ $(document).ready(function () {
         s.find(".champ_icon").attr("src", realRoot + "img/champion/" + champIcon);
         s.find(".spell1").attr("src", realRoot + "img/spell/" + spell1);
         s.find(".spell2").attr("src", realRoot + "img/spell/" + spell2);
-        s.find(".row_s5").text(s5);
+        s.find(".row_s5").html(s5);
         s.find(".moc").text(oc);
         s.find(".mdc").text(dc);
         s.find(".muc").text(uc);
@@ -90,10 +90,10 @@ $(document).ready(function () {
         searching = true;
         $.ajax(realRoot + name + "/curgame/").done(function (data) {
             console.log(data);
-            $("#searchButton").addClass("btn-success");
-            setTimeout(function () {
-                $("#searchButton").removeClass("btn-success");
-            }, 2000);
+//            $("#searchButton").addClass("btn-success");
+//            setTimeout(function () {
+//                $("#searchButton").removeClass("btn-success");
+//            }, 2000);
             //cleanUp();
             handleData(data);
         }).fail(function (data) {

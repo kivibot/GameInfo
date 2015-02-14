@@ -1,3 +1,4 @@
+
 body{
     background-image: url("../img/bg.png");
 }
@@ -85,10 +86,6 @@ body{
     float: right;
 }
 
-.tr {
-    text-align: right;
-}
-
 .cr1 {
     border-bottom: 1px solid #ccc;
     background-color: #efefef;
@@ -134,10 +131,9 @@ body{
 }
 
 .bans img {
-    max-width: 20%;
-    max-height: 20%;
+    max-width: 25%;
+    max-height: 25%;
     float: left;
-    margin-right: 2px;
 }
 
 .spinner {

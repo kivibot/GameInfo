@@ -196,7 +196,14 @@ public class GameInfoBackend {
                     if (l.getQueue().equals("RANKED_SOLO_5x5")) {
                         for (LeagueEntry le : l.getEntries()) {
                             if (le.getPlayerOrTeamId().equals(p.getSummonerId() + "")) {
-                                po.put("s5", l.getTier() + " " + le.getDivision());
+                                if (le.getMiniSeries() == null) {
+                                    po.put("s5", l.getTier() + " " + le.getDivision() + "<br>" + le.getLeaguePoints() + " LP");
+                                } else {
+                                    po.put("s5", l.getTier() + " " + le.getDivision() + "<br> Series: " + le.getMiniSeries().getProgress()
+                                            .replace("N", "<span class='grey1'> -</span>")
+                                            .replace("W", "<span class='green1'>W</span>")
+                                            .replace("L", "<span class='red1'>L</span>"));
+                                }
                                 yoloRank = true;
                                 break;
                             }
