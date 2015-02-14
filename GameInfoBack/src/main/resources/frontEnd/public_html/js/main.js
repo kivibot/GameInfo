@@ -13,6 +13,7 @@ $(document).ready(function () {
         data.bans.forEach(function (p) {
             addBan(p.team, p.champion);
         });
+        $("#logo1").removeClass("logo1");
         $("#teams").show();
     }
     lastRowT100 = false;
@@ -71,14 +72,14 @@ $(document).ready(function () {
                 + '<strong>' + strong + '</strong> ' + info + '</div>');
 
     }
-    function cleanUp() {
-        $("#t100_summoners .row_summoner").remove();
-        $("#t200_summoners .row_summoner").remove();
-        $("#t100_bans img").remove();
-        $("#t200_bans img").remove();
-        lastRowT200 = false;
-        lastRowT100 = false;
-    }
+//    function cleanUp() {
+//        $("#t100_summoners .row_summoner").remove();
+//        $("#t200_summoners .row_summoner").remove();
+//        $("#t100_bans img").remove();
+//        $("#t200_bans img").remove();
+//        lastRowT200 = false;
+//        lastRowT100 = false;
+//    }
     function searchSummoner(name) {
         localStorage.searchValue = name;
         $("#summonerInput").val(localStorage.searchValue);
@@ -93,7 +94,7 @@ $(document).ready(function () {
             setTimeout(function () {
                 $("#searchButton").removeClass("btn-success");
             }, 2000);
-            cleanUp();
+            //cleanUp();
             handleData(data);
         }).fail(function (data) {
             console.log(data)

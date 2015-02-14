@@ -52,6 +52,7 @@ body{
     background-color: #F26F97;
     font-weight: bold;
     color: #ffffff;
+    margin-bottom: 15px;
 }
 
 .vc {
@@ -124,6 +125,10 @@ body{
     color: #565656;
 }
 
+.logo1 {
+    margin-top: 0;
+}
+
 .bigNameContainer{
     padding-left: 3px;
 }
@@ -154,12 +159,21 @@ body{
     transition: background-color 1s, color 0.2s;
 }
 
+form {
+    margin: 0;
+}
+
 .searchArea {
-    margin: 10px;
+    margin: 15px;
+    margin-top: 0px;
 }
 
 .middle {
     padding-left: 0;
     padding-right: 0;
     text-align: center;
+}
+
+.maincont {
+    padding-top: 15px;
 }
