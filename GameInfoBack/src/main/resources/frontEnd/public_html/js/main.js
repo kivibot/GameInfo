@@ -87,7 +87,7 @@ $(document).ready(function () {
         $("#searchButtonImage").toggleClass("glyphicon-refresh");
         $("#searchButtonText").text("Searching")
         searching = true;
-        $.ajax("/" + name + "/curgame/").done(function (data) {
+        $.ajax(realRoot + name + "/curgame/").done(function (data) {
             console.log(data);
             $("#searchButton").addClass("btn-success");
             setTimeout(function () {
