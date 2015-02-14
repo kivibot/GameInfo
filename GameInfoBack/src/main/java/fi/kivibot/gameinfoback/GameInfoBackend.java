@@ -36,23 +36,23 @@ import spark.template.freemarker.FreeMarkerEngine;
  * @author Nicklas
  */
 public class GameInfoBackend {
-
+    
     private final int port;
     private final String apiKey;
-
+    
     private ApiHandler api;
     private ApiCache apic;
-
+    
     private Map<Long, String> champMap = new HashMap<>();
     private Map<Long, String> spellMap = new HashMap<>();
     private Map<Long, String> mapMap = new HashMap<>();
     private Map<Long, String> gqciMap = new HashMap<>();
-
+    
     public GameInfoBackend(int port, String apiKey) {
         this.port = port;
         this.apiKey = apiKey;
     }
-
+    
     public void start() {
         {
             JSONObject champs = (JSONObject) JSONValue.parse(
@@ -84,10 +84,10 @@ public class GameInfoBackend {
                 gqciMap.put((Long) ((Map.Entry) e).getValue(), (String) ((Map.Entry) e).getKey());
             });
         }
-
+        
         api = new ApiHandler(apiKey);
         apic = new ApiCache(api);
-
+        
         Spark.setPort(port);
         Spark.staticFileLocation("/frontEnd/public_html");
         Spark.before((req, res) -> {
@@ -98,14 +98,13 @@ public class GameInfoBackend {
         });
         Spark.get(":summoner/curgame/", this::handleGameInfo);
         Spark.get("/", (req, res) -> {
-            Map<String, Object> attributes = new HashMap<>();
             String summoner = req.queryParams("summoner");
             if (summoner != null) {
-                attributes.put("autoFind", true);
-                attributes.put("summoner", summoner);
-            } else {
-                attributes.put("autoFind", false);
+                res.redirect("/" + summoner);
+                Spark.halt();
             }
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("autoFind", false);
             return new ModelAndView(attributes, "index.html");
         }, new FreeMarkerEngine());
         Spark.get("/:summoner", (req, res) -> {
@@ -131,7 +130,7 @@ public class GameInfoBackend {
             return new ModelAndView(attributes, "index.html");
         }, new FreeMarkerEngine());
     }
-
+    
     private String handleGameInfo(Request req, Response res) throws IOException, RateLimitException, RequestException, RitoException {
         System.out.println("--");
         Summoner s = api.getSummonerByName(URLDecoder.decode(req.params("summoner"), "utf-8"));
@@ -144,7 +143,7 @@ public class GameInfoBackend {
             res.status(404);
             return "Game not found!";
         }
-
+        
         JSONObject jo = new JSONObject();
         jo.put("bigIcon", s.getProfileIconId() + ".png");
         jo.put("bigName", s.getName());
@@ -181,7 +180,7 @@ public class GameInfoBackend {
             mo.put("dc", dc);
             mo.put("uc", uc);
             po.put("masteries", mo);
-
+            
             boolean yoloRank = false;
             List<League> leagues = apic.getLeagueEntries(p.getSummonerId());
             if (leagues != null) {
@@ -217,7 +216,7 @@ public class GameInfoBackend {
                         break;
                     }
                 }
-
+                
             }
             if (!found) {
                 JSONObject ro = new JSONObject();
@@ -230,7 +229,7 @@ public class GameInfoBackend {
                 ro.put("championLosses", 0);
                 po.put("ranked", ro);
             }
-
+            
             po.put("hilight", p.getSummonerId() == s.getId());
             for (RunePage rp : apic.getRunes(p.getSummonerId()).getRunePages()) {
                 if (rp.isCurrent()) {
@@ -242,11 +241,11 @@ public class GameInfoBackend {
                     break;
                 }
             }
-
+            
             ja.add(po);
         }
         jo.put("participant", ja);
-
+        
         JSONArray banja = new JSONArray();
         for (BannedChampion bc : cg.getBannedChampions()) {
             JSONObject banjo = new JSONObject();
@@ -256,10 +255,10 @@ public class GameInfoBackend {
             banja.add(banjo);
         }
         jo.put("bans", banja);
-
+        
         res.type("application/json");
-
+        
         return jo.toJSONString();
     }
-
+    
 }

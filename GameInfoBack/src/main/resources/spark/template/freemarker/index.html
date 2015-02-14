@@ -118,19 +118,23 @@
             </div>
             <div>&nbsp;</div>
             <div class="row">
-                <div class="col-md-3 input-group searchArea">
-                    <input type="text" class="form-control" id="summonerInput" placeholder="Summoner">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" id="searchButton" type="button">
-                            <span class="glyphicon glyphicon-search" aria-hidden="true" id="searchButtonImage"></span>
-                            <span id="searchButtonText">Search</span>
-                        </button>
-                    </span>
-                </div>
+                <form action="/" method="get">
+                    <div class="col-md-3 input-group searchArea">
+                        <input type="text" name="summoner" class="form-control" id="summonerInput" placeholder="Summoner">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" id="searchButton" type="submit">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true" id="searchButtonImage"></span>
+                                <span id="searchButtonText">Search</span>
+                            </button>
+                        </span>
+                    </div>
+                </form>
             </div>
         </div>
         <#if autoFind>
-        <script>$(document).ready(function(){search("${summoner}")});</script>
+        <script>$(document).ready(function () {
+                search("${summoner}")
+            });</script>
         </#if>
     </body>
 </html>

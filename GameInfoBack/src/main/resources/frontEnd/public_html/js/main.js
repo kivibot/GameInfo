@@ -116,14 +116,14 @@ $(document).ready(function () {
         localStorage.searchValue = $("#summonerInput").val();
     }
     search = searchSummoner;
-    $("#searchButton").click(searchButtonAction);
-    $('#summonerInput').bind("enterKey", searchButtonAction);
-    $('#summonerInput').keyup(function (e) {
-        if (e.keyCode === 13)
-        {
-            $(this).trigger("enterKey");
-        }
-    });
+//    $("#searchButton").click(searchButtonAction);
+//    $('#summonerInput').bind("enterKey", searchButtonAction);
+//    $('#summonerInput').keyup(function (e) {
+//        if (e.keyCode === 13)
+//        {
+//            $(this).trigger("enterKey");
+//        }
+//    });
     //searchSummoner("tuk1");
     if (localStorage.searchValue !== undefined) {
         $("#summonerInput").val(localStorage.searchValue);
