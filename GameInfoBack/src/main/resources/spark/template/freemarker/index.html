@@ -129,5 +129,8 @@
                 </div>
             </div>
         </div>
+        <#if autoFind>
+        <script>$(document).ready(function(){search("${summoner}")});</script>
+        </#if>
     </body>
 </html>

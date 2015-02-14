@@ -1,3 +1,5 @@
+var search;
+
 $(document).ready(function () {
     function handleData(data) {
         setInfo(data.bigIcon, data.bigName, data.gameInfo);
@@ -113,6 +115,7 @@ $(document).ready(function () {
         }
         localStorage.searchValue = $("#summonerInput").val();
     }
+    search = searchSummoner;
     $("#searchButton").click(searchButtonAction);
     $('#summonerInput').bind("enterKey", searchButtonAction);
     $('#summonerInput').keyup(function (e) {
