@@ -9,7 +9,8 @@ $(document).ready(function () {
                     p.masteries.oc, p.masteries.dc, p.masteries.uc,
                     p.ranked.kda, p.ranked.averageKills, p.ranked.averageDeaths,
                     p.ranked.averageAssists, p.ranked.championWinRatio, p.ranked.championWins,
-                    p.ranked.championLosses, p.runePageName, p.runePageNameFull, p.hilight);
+                    p.ranked.championLosses, p.runePageName, p.runePageNameFull, p.hilight,
+                    p.runeStats);
         });
         data.bans.forEach(function (p) {
             addBan(p.team, p.champion);
@@ -19,7 +20,7 @@ $(document).ready(function () {
     }
     lastRowT100 = false;
     lastRowT200 = false;
-    function addSummoner(team, name, champIcon, spell1, spell2, s5, wins, losses, oc, dc, uc, kda, ak, ad, aa, cwr, cw, cl, rpname, rpnamef, hilight) {
+    function addSummoner(team, name, champIcon, spell1, spell2, s5, wins, losses, oc, dc, uc, kda, ak, ad, aa, cwr, cw, cl, rpname, rpnamef, hilight, runeStats) {
         s = $("#template .row_summoner").clone();
         if (team === 100) {
             if (!lastRowT100) {
@@ -53,13 +54,17 @@ $(document).ready(function () {
         s.find(".kda_k").text(ak);
         s.find(".kda_d").text(ad);
         s.find(".kda_a").text(aa);
-        s.find(".winRate").text((Math.round(wins / Math.max(wins + losses, 0) * 1000) / 10) + "%");
+        s.find(".winRate").text((Math.round(wins / Math.max(wins + losses, 1) * 1000) / 10) + "%");
         s.find(".wins").text(wins);
         s.find(".losses").text(losses);
         s.find(".champWins .rate").text(cwr);
         s.find(".champWins .wins").text(cw);
         s.find(".champWins .losses").text(cl);
-        s.find(".runes").text(rpname).attr("title", rpnamef).tooltip();
+        var rsstr = "<br>";
+        runeStats.forEach(function (rs) {
+            rsstr += "<br>" + rs.name + ":<br>" + rs.value;
+        });
+        s.find(".runes").text(rpname).attr("title", rpnamef + rsstr).tooltip();
         $("#t" + team + "_summoners").append(s);
     }
     function addBan(team, champ) {

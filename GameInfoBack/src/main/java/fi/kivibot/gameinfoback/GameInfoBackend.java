@@ -15,6 +15,7 @@ import fi.kivibot.gameinfoback.api.structures.Participant;
 import fi.kivibot.gameinfoback.api.structures.PlayerStatsSummary;
 import fi.kivibot.gameinfoback.api.structures.RankedStats;
 import fi.kivibot.gameinfoback.api.structures.RunePage;
+import fi.kivibot.gameinfoback.api.structures.RuneSlot;
 import fi.kivibot.gameinfoback.api.structures.Summoner;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -48,6 +49,8 @@ public class GameInfoBackend {
     private Map<Long, String> spellMap = new HashMap<>();
     private Map<Long, String> mapMap = new HashMap<>();
     private Map<Long, String> gqciMap = new HashMap<>();
+    private Map<Long, RuneInfo> runeMap = new HashMap<>();
+    private Map<String, String> nameMap = new HashMap<>();
 
     public GameInfoBackend(int port, String apiKey) {
         this.port = port;
@@ -83,6 +86,30 @@ public class GameInfoBackend {
                     new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream("gameQueueConfigId.json")));
             gqcis.entrySet().forEach((e) -> {
                 gqciMap.put((Long) ((Map.Entry) e).getValue(), (String) ((Map.Entry) e).getKey());
+            });
+        }
+        {
+            JSONObject runes = (JSONObject) JSONValue.parse(
+                    new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream("rune.json")));
+            ((JSONObject) runes.get("data")).entrySet().forEach((e) -> {
+                JSONObject rune = (JSONObject) ((Map.Entry) e).getValue();
+                JSONObject stats = (JSONObject) rune.get("stats");
+                List<RuneStat> statsl = new ArrayList<>();
+                stats.forEach((name, value) -> {
+                    if (value instanceof Long) {
+                        statsl.add(new RuneStat((String) name, (double) (long) (Long) value));
+                    } else {
+                        statsl.add(new RuneStat((String) name, (Double) value));
+                    }
+                });
+                runeMap.put(Long.valueOf((String) ((Map.Entry) e).getKey()), new RuneInfo((String) rune.get("name"), (String) rune.get("description"), statsl));
+            });
+        }
+        {
+            JSONObject names = (JSONObject) JSONValue.parse(
+                    new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream("language.json")));
+            ((JSONObject) names.get("data")).entrySet().forEach((e) -> {
+                nameMap.put((String) ((Map.Entry) e).getKey(), (String) ((Map.Entry) e).getValue());
             });
         }
 
@@ -223,7 +250,7 @@ public class GameInfoBackend {
                         ro.put("averageKills", Math.round((double) cs.getTotalChampionKills() / (double) cs.getTotalSessionsPlayed() * 10.0) / 10.0 + "");
                         ro.put("averageDeaths", Math.round((double) cs.getTotalDeathsPerSession() / (double) cs.getTotalSessionsPlayed() * 10.0) / 10.0 + "");
                         ro.put("averageAssists", Math.round((double) cs.getTotalAssists() / (double) cs.getTotalSessionsPlayed() * 10.0) / 10.0 + "");
-                        ro.put("kda", cs.getTotalDeathsPerSession() == 0 ? "Perfect" : (Math.round((cs.getTotalAssists() + cs.getTotalChampionKills()) / (double) cs.getTotalDeathsPerSession() * 10.0) / 10.0) + " KDA");
+                        ro.put("kda", cs.getTotalDeathsPerSession() == 0 ? "Perfect KDA" : (Math.round((cs.getTotalAssists() + cs.getTotalChampionKills()) / (double) cs.getTotalDeathsPerSession() * 10.0) / 10.0) + " KDA");
                         ro.put("championWinRatio", (Math.round((cs.getTotalSessionsWon()) / (double) cs.getTotalSessionsPlayed() * 1000.0) / 10.0) + "%");
                         ro.put("championWins", cs.getTotalSessionsWon());
                         ro.put("championLosses", cs.getTotalSessionsLost());
@@ -254,6 +281,26 @@ public class GameInfoBackend {
                             ? pageName.substring(0, Math.min(10, pageName.length())) + "..."
                             : pageName.substring(0, Math.min(13, pageName.length()))));
                     po.put("runePageNameFull", pageName);
+                    Map<String, Double> stats = new HashMap<>();
+                    for (RuneSlot r : rp.getSlots()) {
+                        RuneInfo ri = runeMap.get((long) r.getRuneId());
+                        for (RuneStat rs : ri.getStats()) {
+                            Double d = stats.get(rs.getName());
+                            if (d == null) {
+                                d = 0.0;
+                            }
+                            stats.put(rs.getName(), d + rs.getValue());
+                        }
+                    }
+                    JSONArray sa = new JSONArray();
+                    for (Map.Entry<String, Double> e : stats.entrySet()) {
+                        JSONObject so = new JSONObject();
+                        String name = nameMap.get(e.getKey());
+                        so.put("name", name != null ? name.replace("%", "").trim() : e.getKey());
+                        so.put("value", (e.getKey().contains("Percent") ? (Math.round(e.getValue() * 1000.0) / 10.0)+"%" : Math.round(e.getValue() * 10.0) / 10.0));
+                        sa.add(so);
+                    }
+                    po.put("runeStats", sa);
                     break;
                 }
             }
@@ -270,7 +317,7 @@ public class GameInfoBackend {
             }
             if (!yolostats) {
                 po.put("wins", 0);
-                po.put("losses", 0);
+                po.put("losses", 0); 
             }
 
             ja.add(po);
