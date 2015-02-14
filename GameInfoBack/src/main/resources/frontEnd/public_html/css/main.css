@@ -91,14 +91,26 @@ body{
     background-color: #efefef;
 }
 
-.cr2 {
+.cr1:hover {
     border-bottom: 1px solid #ccc;
+    background-color: #e8e8e8;
+}
+
+.cr2 {
     background-color: #fcfcfc;
+}
+
+.cr2:hover {
+    background-color: #f4f4f4;
 }
 
 .cr3 {
     border-bottom: 1px solid #ccc;
     background-color: #fff0c0;
+}
+
+.cr3:hover {
+    background-color: #f8e8b8;
 }
 
 .vs {

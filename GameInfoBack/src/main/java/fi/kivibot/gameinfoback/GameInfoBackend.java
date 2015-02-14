@@ -12,6 +12,7 @@ import fi.kivibot.gameinfoback.api.structures.League;
 import fi.kivibot.gameinfoback.api.structures.LeagueEntry;
 import fi.kivibot.gameinfoback.api.structures.Mastery;
 import fi.kivibot.gameinfoback.api.structures.Participant;
+import fi.kivibot.gameinfoback.api.structures.PlayerStatsSummary;
 import fi.kivibot.gameinfoback.api.structures.RankedStats;
 import fi.kivibot.gameinfoback.api.structures.RunePage;
 import fi.kivibot.gameinfoback.api.structures.Summoner;
@@ -222,7 +223,7 @@ public class GameInfoBackend {
                         ro.put("averageKills", Math.round((double) cs.getTotalChampionKills() / (double) cs.getTotalSessionsPlayed() * 10.0) / 10.0 + "");
                         ro.put("averageDeaths", Math.round((double) cs.getTotalDeathsPerSession() / (double) cs.getTotalSessionsPlayed() * 10.0) / 10.0 + "");
                         ro.put("averageAssists", Math.round((double) cs.getTotalAssists() / (double) cs.getTotalSessionsPlayed() * 10.0) / 10.0 + "");
-                        ro.put("kda", (Math.round((cs.getTotalAssists() + cs.getTotalChampionKills()) / (double) cs.getTotalDeathsPerSession() * 10.0) / 10.0) + " KDA");
+                        ro.put("kda", cs.getTotalDeathsPerSession() == 0 ? "Perfect" : (Math.round((cs.getTotalAssists() + cs.getTotalChampionKills()) / (double) cs.getTotalDeathsPerSession() * 10.0) / 10.0) + " KDA");
                         ro.put("championWinRatio", (Math.round((cs.getTotalSessionsWon()) / (double) cs.getTotalSessionsPlayed() * 1000.0) / 10.0) + "%");
                         ro.put("championWins", cs.getTotalSessionsWon());
                         ro.put("championLosses", cs.getTotalSessionsLost());
@@ -255,6 +256,21 @@ public class GameInfoBackend {
                     po.put("runePageNameFull", pageName);
                     break;
                 }
+            }
+
+            boolean yolostats = false;
+            List<PlayerStatsSummary> pssl = apic.getStatsSummary(p.getSummonerId());
+            for (PlayerStatsSummary pss : pssl) {
+                if (pss.getPlayerStatSummaryType().equals("RankedSolo5x5")) {
+                    po.put("wins", pss.getWins());
+                    po.put("losses", pss.getLosses());
+                    yolostats = true;
+                    break;
+                }
+            }
+            if (!yolostats) {
+                po.put("wins", 0);
+                po.put("losses", 0);
             }
 
             ja.add(po);

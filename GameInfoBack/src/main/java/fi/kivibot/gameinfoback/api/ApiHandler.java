@@ -12,6 +12,7 @@ import fi.kivibot.gameinfoback.api.structures.BannedChampion;
 import fi.kivibot.gameinfoback.api.structures.ChampionStats;
 import fi.kivibot.gameinfoback.api.structures.CurrentGame;
 import fi.kivibot.gameinfoback.api.structures.League;
+import fi.kivibot.gameinfoback.api.structures.PlayerStatsSummary;
 import fi.kivibot.gameinfoback.api.structures.RankedStats;
 import fi.kivibot.gameinfoback.api.structures.RunePage;
 import fi.kivibot.gameinfoback.api.structures.RunePages;
@@ -42,42 +43,42 @@ import org.json.simple.JSONValue;
  * @author Nicklas
  */
 public class ApiHandler {
-    
+
     private class ApiResponse {
-        
+
         private final int code;
         private final String body;
-        
+
         public ApiResponse(int code, String body) {
             this.code = code;
             this.body = body;
         }
-        
+
         public int getCode() {
             return code;
         }
-        
+
         public String getBody() {
             return body;
         }
     }
-    
+
     private String apiKey;
-    
+
     public ApiHandler(String apiKey) {
         this.apiKey = apiKey;
     }
-    
+
     public Summoner getSummonerByName(String name)
             throws IOException, RateLimitException, RequestException, RitoException {
         List<String> l = new ArrayList<>();
         l.add(name);
         return getSummonersByNames(l).get(name.replace(" ", "").toLowerCase());
     }
-    
+
     public Map<String, Summoner> getSummonersByNames(List<String> names)
             throws IOException, RateLimitException, RequestException, RitoException {
-        
+
         String path = "v1.4/summoner/by-name/";
         for (Iterator<String> i = names.iterator(); i.hasNext();) {
             path += URLEncoder.encode(i.next().replace(" ", ""), "utf-8");
@@ -103,11 +104,11 @@ public class ApiHandler {
             default:
                 throw new RitoException(resp.code);
         }
-        
+
         JSONObject jo = (JSONObject) JSONValue.parse(resp.body);
-        
+
         Map<String, Summoner> m = new HashMap<>();
-        
+
         jo.forEach((name, d) -> {
             JSONObject data = (JSONObject) d;
             m.put((String) name, new Summoner(
@@ -119,10 +120,10 @@ public class ApiHandler {
         });
         return m;
     }
-    
+
     public CurrentGame getCurrentGame(Summoner s)
             throws IOException, RateLimitException, RequestException, RitoException {
-        
+
         ApiResponse resp = get(formObserverUrl("getSpectatorGameInfo/{platformId}/" + s.getId()));
 
         //Error handling
@@ -138,9 +139,9 @@ public class ApiHandler {
             default:
                 throw new RitoException(resp.code);
         }
-        
+
         JSONObject jo = (JSONObject) JSONValue.parse(resp.body);
-        
+
         List<BannedChampion> bannedChampions = new ArrayList<>();
         ((JSONArray) jo.get("bannedChampions")).forEach((d) -> {
             JSONObject data = (JSONObject) d;
@@ -149,7 +150,7 @@ public class ApiHandler {
                     (int) (long) (Long) data.get("pickTurn"),
                     (long) (Long) data.get("teamId")));
         });
-        
+
         List<Participant> participants = new ArrayList<>();
         ((JSONArray) jo.get("participants")).forEach((d) -> {
             JSONObject data = (JSONObject) d;
@@ -179,7 +180,7 @@ public class ApiHandler {
                     (String) data.get("summonerName"),
                     (long) (Long) data.get("teamId")));
         });
-        
+
         return new CurrentGame(
                 bannedChampions,
                 (long) (Long) jo.get("gameId"),
@@ -193,10 +194,10 @@ public class ApiHandler {
                 participants,
                 (String) jo.get("platformId"));
     }
-    
+
     public Map<String, List<League>> getLeaguesEntry(List<Long> ids)
             throws IOException, RateLimitException, RequestException, RitoException {
-        
+
         String path = "v2.5/league/by-summoner/";
         for (Iterator<Long> i = ids.iterator(); i.hasNext();) {
             path += i.next();
@@ -204,7 +205,7 @@ public class ApiHandler {
                 path += ",";
             }
         }
-        
+
         ApiResponse resp = get(formApiUrl(path + "/entry"));
 
         //Error handling
@@ -223,11 +224,11 @@ public class ApiHandler {
             default:
                 throw new RitoException(resp.code);
         }
-        
+
         Map<String, List<League>> lm = new HashMap();
-        
+
         JSONObject jo = (JSONObject) JSONValue.parse(resp.body);
-        
+
         jo.entrySet().forEach((e) -> {
             List<League> leagues = new ArrayList<>();
             JSONArray la = (JSONArray) ((Map.Entry) e).getValue();
@@ -263,13 +264,13 @@ public class ApiHandler {
                         (String) ((JSONObject) lea).get("tier")));
             });
         });
-        
+
         return lm;
     }
-    
+
     public RankedStats getRankedStats(long id)
             throws IOException, RateLimitException, RequestException, RitoException {
-        
+
         ApiResponse resp = get(formApiUrl("v1.3/stats/by-summoner/" + id + "/ranked"));
 
         //Error handling
@@ -288,11 +289,11 @@ public class ApiHandler {
             default:
                 throw new RitoException(resp.code);
         }
-        
+
         JSONObject jo = (JSONObject) JSONValue.parse(resp.body);
-        
+
         List<ChampionStats> champions = new ArrayList<>();
-        
+
         ((JSONArray) jo.get("champions")).forEach((e) -> {
             JSONObject ejo = (JSONObject) e;
             JSONObject sjo = ((JSONObject) ejo.get("stats"));
@@ -305,13 +306,13 @@ public class ApiHandler {
                     (int) (long) (Long) sjo.get("totalDeathsPerSession"),
                     (int) (long) (Long) sjo.get("totalAssists")));
         });
-        
+
         return new RankedStats(champions, (Long) jo.get("modifyDate"), (Long) jo.get("summonerId"));
     }
-    
+
     public Map<String, RunePages> getRunes(List<Long> ids)
             throws IOException, RateLimitException, RequestException, RitoException {
-        
+
         String path = "v1.4/summoner/";
         for (Iterator<Long> i = ids.iterator(); i.hasNext();) {
             path += i.next();
@@ -319,7 +320,7 @@ public class ApiHandler {
                 path += ",";
             }
         }
-        
+
         ApiResponse resp = get(formApiUrl(path + "/runes"));
 
         //Error handling
@@ -338,7 +339,7 @@ public class ApiHandler {
             default:
                 throw new RitoException(resp.code);
         }
-        
+
         JSONObject jo = (JSONObject) JSONValue.parse(resp.body);
         Map<String, RunePages> lm = new HashMap<>();
         for (Map.Entry<String, JSONObject> e : ((Map<String, JSONObject>) jo).entrySet()) {
@@ -358,22 +359,57 @@ public class ApiHandler {
             }
             lm.put(e.getKey(), new RunePages(pages, (Long) e.getValue().get("summonerId")));
         }
-        
+
         return lm;
     }
-    
+
+    public List<PlayerStatsSummary> getStatsSummary(long id) throws IOException, RequestException, RateLimitException, RitoException {
+
+        ApiResponse resp = get(formApiUrl("v1.3/stats/by-summoner/" + id + "/summary"));
+
+        //Error handling
+        switch (resp.code) {
+            case 200:
+                break;
+            case 400:
+            case 401:
+                throw new RequestException(resp.code);
+            case 404:
+                return new ArrayList<>();
+            case 429:
+                throw new RateLimitException();
+            case 500:
+            case 503:
+            default:
+                throw new RitoException(resp.code);
+        }
+
+        JSONObject jo = (JSONObject) JSONValue.parse(resp.body);
+        JSONArray ja = (JSONArray) jo.get("playerStatSummaries");
+        List<PlayerStatsSummary> sl = new ArrayList<>();
+        ja.forEach((so) -> {
+            JSONObject data = (JSONObject) so;
+            sl.add(new PlayerStatsSummary(data.containsKey("losses") ? (int) (long) (Long) data.get("losses") : 0,
+                    (Long) data.get("modifyDate"),
+                    (String) data.get("playerStatSummaryType"),
+                    (int) (long) (Long) data.get("wins")));
+        });
+        return sl;
+    }
+
     private String formApiUrl(String path) {
         return "https://eune.api.pvp.net/api/lol/eune/" + path + "?api_key=" + apiKey;
     }
-    
+
     private String formObserverUrl(String path) {
         return "https://eune.api.pvp.net/observer-mode/rest/consumer/" + path.replace("{platformId}", "EUN1") + "?api_key=" + apiKey;
     }
-    
+
     private boolean apiOK = true;
-    
+
     private ApiResponse get(String url) throws MalformedURLException, IOException {
         boolean apiChecker = false;
+        System.out.print(".");
         for (int i = 0; i < 100; i++) {
 //            while (!apiChecker && !apiOK) {
 //                try {
@@ -428,5 +464,5 @@ public class ApiHandler {
         }
         return new ApiResponse(429, "");
     }
-    
+
 }

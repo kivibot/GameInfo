@@ -5,7 +5,8 @@ $(document).ready(function () {
         setInfo(data.bigIcon, data.bigName, data.gameInfo);
         data.participant.forEach(function (p) {
             addSummoner(p.team, p.name, p.championImage, p.spell1Image, p.spell2Image,
-                    p.s5, p.masteries.oc, p.masteries.dc, p.masteries.uc,
+                    p.s5, p.wins, p.losses,
+                    p.masteries.oc, p.masteries.dc, p.masteries.uc,
                     p.ranked.kda, p.ranked.averageKills, p.ranked.averageDeaths,
                     p.ranked.averageAssists, p.ranked.championWinRatio, p.ranked.championWins,
                     p.ranked.championLosses, p.runePageName, p.runePageNameFull, p.hilight);
@@ -18,7 +19,7 @@ $(document).ready(function () {
     }
     lastRowT100 = false;
     lastRowT200 = false;
-    function addSummoner(team, name, champIcon, spell1, spell2, s5, oc, dc, uc, kda, ak, ad, aa, cwr, cw, cl, rpname, rpnamef, hilight) {
+    function addSummoner(team, name, champIcon, spell1, spell2, s5, wins, losses, oc, dc, uc, kda, ak, ad, aa, cwr, cw, cl, rpname, rpnamef, hilight) {
         s = $("#template .row_summoner").clone();
         if (team === 100) {
             if (!lastRowT100) {
@@ -52,6 +53,9 @@ $(document).ready(function () {
         s.find(".kda_k").text(ak);
         s.find(".kda_d").text(ad);
         s.find(".kda_a").text(aa);
+        s.find(".winRate").text((Math.round(wins / Math.max(wins + losses, 0) * 1000) / 10) + "%");
+        s.find(".wins").text(wins);
+        s.find(".losses").text(losses);
         s.find(".champWins .rate").text(cwr);
         s.find(".champWins .wins").text(cw);
         s.find(".champWins .losses").text(cl);
@@ -112,7 +116,7 @@ $(document).ready(function () {
         });
         setTimeout(function () {
             if (searching) {
-                $("#searchButtonText").text("Searching. Please be patient!");
+                $("#searchButtonText").text("Tässä menee aikaa...");
             }
         }, 6000);
     }

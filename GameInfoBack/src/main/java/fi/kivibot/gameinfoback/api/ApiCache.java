@@ -5,6 +5,7 @@ import fi.kivibot.gameinfoback.api.exceptions.RateLimitException;
 import fi.kivibot.gameinfoback.api.exceptions.RequestException;
 import fi.kivibot.gameinfoback.api.exceptions.RitoException;
 import fi.kivibot.gameinfoback.api.structures.League;
+import fi.kivibot.gameinfoback.api.structures.PlayerStatsSummary;
 import fi.kivibot.gameinfoback.api.structures.RankedStats;
 import fi.kivibot.gameinfoback.api.structures.RunePages;
 import fi.kivibot.gameinfoback.api.structures.Summoner;
@@ -31,11 +32,13 @@ public class ApiCache {
 
         private final Summoner summoner;
         private final RankedStats rankedStats;
+        private final List<PlayerStatsSummary> playerStatsSummary;
         private final Exception exception;
 
-        public SummonerResult(Summoner summoner, RankedStats rankedStats, Exception exception) {
+        public SummonerResult(Summoner summoner, RankedStats rankedStats, List<PlayerStatsSummary> playerStatsSummary, Exception exception) {
             this.summoner = summoner;
             this.rankedStats = rankedStats;
+            this.playerStatsSummary = playerStatsSummary;
             this.exception = exception;
         }
 
@@ -45,6 +48,10 @@ public class ApiCache {
 
         public RankedStats getRankedStats() {
             return rankedStats;
+        }
+
+        public List<PlayerStatsSummary> getPlayerStatsSummary() {
+            return playerStatsSummary;
         }
 
         public Exception getException() {
@@ -76,6 +83,7 @@ public class ApiCache {
     private final Map<Long, List<League>> leagueMap = new HashMap<>();
     private final Map<Long, RankedStats> rankeStatsMap = new HashMap<>();
     private final Map<Long, RunePages> runePagesMap = new HashMap<>();
+    private final Map<Long, List<PlayerStatsSummary>> statsSummaryMap = new HashMap<>();
     private final ExecutorService pool = Executors.newFixedThreadPool((int) ConfigManager.getDefault().getLong("poolSize", Runtime.getRuntime().availableProcessors()));
 
     public ApiCache(ApiHandler api) {
@@ -87,7 +95,6 @@ public class ApiCache {
         Map<String, Summoner> sumMap = api.getSummonersByNames(summoners);
         List<Long> ids = new ArrayList<>();
         List<Future<SummonerResult>> tasks = new ArrayList<>();
-        long s = System.currentTimeMillis();
         Future<SingleResult<Map<String, List<League>>>> leaguesTask;
         Future<SingleResult<Map<String, RunePages>>> runesTask;
         synchronized (this) {
@@ -96,13 +103,15 @@ public class ApiCache {
                 if (os == null || os.getRevisionDate() != e.getValue().getRevisionDate()) {
                     tasks.add(pool.submit(() -> {
                         RankedStats rs = null;
+                        List<PlayerStatsSummary> pss = null;
                         try {
                             rs = api.getRankedStats(e.getValue().getId());
+                            pss = api.getStatsSummary(e.getValue().getId());
                         } catch (IOException | RateLimitException | RequestException | RitoException ex) {
                             Logger.getLogger(ApiCache.class.getName()).log(Level.SEVERE, null, ex);
-                            return new SummonerResult(e.getValue(), null, ex);
+                            return new SummonerResult(e.getValue(), null, null, ex);
                         }
-                        return new SummonerResult(e.getValue(), rs, null);
+                        return new SummonerResult(e.getValue(), rs, pss, null);
                     }));
                     ids.add(e.getValue().getId());
                 }
@@ -162,6 +171,7 @@ public class ApiCache {
         for (SummonerResult rs : sumress) {
             summonerMap.put(rs.getSummoner().getId(), rs.getSummoner());
             rankeStatsMap.put(rs.getSummoner().getId(), rs.getRankedStats());
+            statsSummaryMap.put(rs.getSummoner().getId(), rs.getPlayerStatsSummary());
         }
         for (Map.Entry<String, List<League>> e : leares.getResult().entrySet()) {
             leagueMap.put(Long.valueOf(e.getKey()), e.getValue());
@@ -181,6 +191,10 @@ public class ApiCache {
 
     public RunePages getRunes(long id) {
         return runePagesMap.get(id);
+    }
+    
+    public List<PlayerStatsSummary> getStatsSummary(long id){
+        return statsSummaryMap.get(id);
     }
 
     private void throwe(Exception e) throws IOException, RateLimitException, RequestException, RitoException {
