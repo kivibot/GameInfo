@@ -40,9 +40,9 @@ $(document).ready(function () {
             s.addClass("cr3");
         }
         s.find(".row_name").text(name);
-        s.find(".champ_icon").attr("src", "img/champion/" + champIcon);
-        s.find(".spell1").attr("src", "img/spell/" + spell1);
-        s.find(".spell2").attr("src", "img/spell/" + spell2);
+        s.find(".champ_icon").attr("src", "/img/champion/" + champIcon);
+        s.find(".spell1").attr("src", "/img/spell/" + spell1);
+        s.find(".spell2").attr("src", "/img/spell/" + spell2);
         s.find(".row_s5").text(s5);
         s.find(".moc").text(oc);
         s.find(".mdc").text(dc);
@@ -58,10 +58,10 @@ $(document).ready(function () {
         $("#t" + team + "_summoners").append(s);
     }
     function addBan(team, champ) {
-        $("#t" + team + "_bans").append('<img src="img/champion/' + champ + '">');
+        $("#t" + team + "_bans").append('<img src="/img/champion/' + champ + '">');
     }
     function setInfo(icon, name, gameinfo) {
-        $("#bigIcon").attr("src", "img/profileicon/" + icon);
+        $("#bigIcon").attr("src", "/img/profileicon/" + icon);
         $("#bigName").text(name);
         $("#gameinfo").text(gameinfo);
     }
@@ -86,7 +86,7 @@ $(document).ready(function () {
         $("#searchButtonImage").toggleClass("spinner");
         $("#searchButtonImage").toggleClass("glyphicon-refresh");
         $("#searchButtonText").text("searching")
-        $.ajax("curgame/" + name).done(function (data) {
+        $.ajax("/" + name + "/curgame/").done(function (data) {
             console.log(data);
             $("#searchButton").addClass("btn-success");
             setTimeout(function () {

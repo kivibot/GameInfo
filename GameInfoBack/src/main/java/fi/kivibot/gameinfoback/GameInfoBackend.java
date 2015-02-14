@@ -96,6 +96,7 @@ public class GameInfoBackend {
                 Spark.halt(401);
             }
         });
+        Spark.get(":summoner/curgame/", this::handleGameInfo);
         Spark.get("/", (req, res) -> {
             Map<String, Object> attributes = new HashMap<>();
             String summoner = req.queryParams("summoner");
@@ -107,7 +108,28 @@ public class GameInfoBackend {
             }
             return new ModelAndView(attributes, "index.html");
         }, new FreeMarkerEngine());
-        Spark.get("/curgame/:summoner", this::handleGameInfo);
+        Spark.get("/:summoner", (req, res) -> {
+            Map<String, Object> attributes = new HashMap<>();
+            String summoner = req.params("summoner");
+            if (summoner != null) {
+                attributes.put("autoFind", true);
+                attributes.put("summoner", summoner);
+            } else {
+                attributes.put("autoFind", false);
+            }
+            return new ModelAndView(attributes, "index.html");
+        }, new FreeMarkerEngine());
+        Spark.get("/:summoner/", (req, res) -> {
+            Map<String, Object> attributes = new HashMap<>();
+            String summoner = req.params("summoner");
+            if (summoner != null) {
+                attributes.put("autoFind", true);
+                attributes.put("summoner", summoner);
+            } else {
+                attributes.put("autoFind", false);
+            }
+            return new ModelAndView(attributes, "index.html");
+        }, new FreeMarkerEngine());
     }
 
     private String handleGameInfo(Request req, Response res) throws IOException, RateLimitException, RequestException, RitoException {
