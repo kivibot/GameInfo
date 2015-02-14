@@ -62,7 +62,7 @@ $(document).ready(function () {
         s.find(".champWins .losses").text(cl);
         var rsstr = "<br>";
         runeStats.forEach(function (rs) {
-            rsstr += "<br>" + rs.name + ":<br>" + rs.value;
+            rsstr += "<br>" + rs.name + "<br>" + rs.value;
         });
         s.find(".runes").text(rpname).attr("title", rpnamef + rsstr).tooltip();
         $("#t" + team + "_summoners").append(s);
