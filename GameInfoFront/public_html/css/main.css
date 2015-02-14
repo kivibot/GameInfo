@@ -1,0 +1,165 @@
+body{
+    background-image: url("../img/bg.png");
+}
+
+.container{
+    margin-top: 50px;
+    background-color: #fff;
+}
+.fitted {
+    max-width: 60%;
+    max-height: 60%;
+    float: left;
+}
+
+.fitted2 {
+    max-width: 30%;
+    max-height: 30%;
+    float: left;
+}
+
+.spell1 {
+}
+
+.spell2 {
+}
+
+.champ {
+    padding-right: 0px;
+}
+
+.rowtop2 {
+    background-color: #4F94D9;
+    font-weight: bold;
+    color: #ffffff;
+    margin-top: 30px;
+}
+
+.rowtop1 {
+    background-color: #4F94D9;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.rowtop4 {
+    background-color: #F26F97;
+    font-weight: bold;
+    color: #ffffff;
+    margin-top: 10px;
+}
+
+.rowtop3 {
+    background-color: #F26F97;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.vc {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+
+.blue1 {
+    color: #7777ff;
+    font-weight: bold;
+}
+
+.red1 {
+    color: #ff7777;
+    font-weight: bold;
+}
+
+.green1 {
+    color: #33aa00;
+    font-weight: bold;
+}
+
+.grey1 {
+    color: #565656;
+    font-weight: bold;
+}
+
+.fr {
+    float: right;
+}
+
+.tr {
+    text-align: right;
+}
+
+.cr1 {
+    border-bottom: 1px solid #ccc;
+    background-color: #efefef;
+}
+
+.cr2 {
+    border-bottom: 1px solid #ccc;
+    background-color: #fcfcfc;
+}
+
+.cr3 {
+    border-bottom: 1px solid #ccc;
+    background-color: #fff0c0;
+}
+
+.vs {
+    font-weight: bold;
+    color: #565656;
+}
+
+.tc {
+    text-align: center;
+}
+
+.tr {
+    text-align: right;
+}
+
+.sicon {
+}
+
+.logo {
+    font-weight: bold;
+    color: #565656;
+}
+
+.bigNameContainer{
+    padding-left: 3px;
+}
+
+.bans img {
+    max-width: 20%;
+    max-height: 20%;
+    float: left;
+    margin-right: 2px;
+}
+
+.spinner {
+    -animation: spin .7s infinite linear;
+    -webkit-animation: spin2 .7s infinite linear;
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg); }
+    to { transform: scale(1) rotate(360deg); }
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg); }
+    to { -webkit-transform: rotate(360deg); }
+}
+
+#searchButton {
+    transition: background-color 1s, color 0.2s;
+}
+
+.searchArea {
+    margin: 10px;
+}
+
+.middle {
+    padding-left: 0;
+    padding-right: 0;
+    text-align: center;
+}
