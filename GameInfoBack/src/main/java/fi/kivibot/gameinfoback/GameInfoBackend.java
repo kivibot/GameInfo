@@ -165,6 +165,10 @@ public class GameInfoBackend {
             attributes.put("realRoot", "../");
             return new ModelAndView(attributes, "index.html");
         }, new FreeMarkerEngine());
+        Spark.exception(RitoException.class, (e, req, res)->{
+            res.status(503);
+            res.body("Failed to get data from RIOT.");
+        });
     }
 
     private String handleGameInfo(Request req, Response res) throws IOException, RateLimitException, RequestException, RitoException {
