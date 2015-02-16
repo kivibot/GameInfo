@@ -1,6 +1,7 @@
 package fi.kivibot.gameinfoback;
 
 import fi.kivibot.gameinfoback.api.ApiCache;
+import fi.kivibot.gameinfoback.api.ApiCacheOld;
 import fi.kivibot.gameinfoback.api.ApiHandler;
 import fi.kivibot.gameinfoback.api.exceptions.RateLimitException;
 import fi.kivibot.gameinfoback.api.exceptions.RequestException;
@@ -43,7 +44,8 @@ public class GameInfoBackend {
     private final String apiKey;
 
     private ApiHandler api;
-    private ApiCache apic;
+    private ApiCacheOld apic;
+    private ApiCache apiCache;
 
     private Map<Long, String> champMap = new HashMap<>();
     private Map<Long, String> spellMap = new HashMap<>();
@@ -114,7 +116,8 @@ public class GameInfoBackend {
         }
 
         api = new ApiHandler(apiKey);
-        apic = new ApiCache(api);
+        apic = new ApiCacheOld(api);
+        apiCache = new ApiCache(api);
 
         Spark.setPort(port);
         Spark.staticFileLocation("/frontEnd/public_html");
@@ -165,12 +168,255 @@ public class GameInfoBackend {
             attributes.put("realRoot", "../");
             return new ModelAndView(attributes, "index.html");
         }, new FreeMarkerEngine());
-        Spark.exception(RitoException.class, (e, req, res)->{
+        Spark.get(":summoner/current", this::handleCurrentGame);
+        Spark.get(":gameId/ranks", this::handleGameRanks);
+        Spark.get(":gameId/:summonerId/stats", this::handleSummonerStats);
+        Spark.exception(RitoException.class, (e, req, res) -> {
             res.status(503);
             res.body("Failed to get data from RIOT.");
+            System.err.println(e);
         });
     }
 
+    private String handleCurrentGame(Request req, Response res) throws IOException, RateLimitException, RequestException, RitoException {
+        System.out.println("New request");
+        Summoner s = api.getSummonerByName(URLDecoder.decode(req.params("summoner"), "utf-8"));
+        if (s == null) {
+            res.status(404);
+            return "The requested summoner was not found.";
+        }
+        CurrentGame cg = api.getCurrentGame(s);
+        if (cg == null) {
+            res.status(404);
+            return "No active games were found.";
+        }
+        JSONObject jo = new JSONObject();
+        jo.put("gameId", cg.getGameId());
+        jo.put("bigIcon", s.getProfileIconId() + ".png");
+        jo.put("bigName", s.getName());
+        jo.put("infoLine", mapMap.get(cg.getMapId())
+                + ", "
+                + gqciMap.get(cg.getGameQueueConfigId())
+                + ", EUNE");
+
+        JSONArray ja = new JSONArray();
+        for (Participant p : cg.getParticipants()) {
+            JSONObject po = new JSONObject();
+            po.put("summonerId", p.getSummonerId());
+            po.put("summonerName", p.getSummonerName());
+            po.put("team", p.getTeamId());
+            po.put("championImage", champMap.get(p.getChampionId()));
+            po.put("spell1Image", spellMap.get(p.getSpell1Id()));
+            po.put("spell2Image", spellMap.get(p.getSpell2Id()));
+            int oc = 0, dc = 0, uc = 0;
+            for (Mastery m : p.getMasteries()) {
+                if (m.getMasteryId() < 4200) {
+                    oc += m.getRank();
+                } else if (m.getMasteryId() < 4300) {
+                    dc += m.getRank();
+                } else {
+                    uc += m.getRank();
+                }
+            }
+            JSONObject mo = new JSONObject();
+            mo.put("offense", oc);
+            mo.put("defense", dc);
+            mo.put("utility", uc);
+            po.put("masteries", mo);
+            po.put("hilight", p.getSummonerId() == s.getId());
+
+            ja.add(po);
+        }
+
+        jo.put("participants", ja);
+
+        JSONArray banja = new JSONArray();
+        for (BannedChampion bc : cg.getBannedChampions()) {
+            JSONObject banjo = new JSONObject();
+            banjo.put("team", bc.getTeamId());
+            banjo.put("champion", champMap.get(bc.getChampionId()));
+            banjo.put("turn", bc.getPickTurn());
+            banja.add(banjo);
+        }
+        jo.put("bannedChampions", banja);
+
+        jo.put("startTime", cg.getGameStartTime());
+
+        res.type("application/json");
+
+        apiCache.submitGame(cg);
+
+        return jo.toJSONString();
+    }
+
+    private String handleGameRanks(Request req, Response res) throws IOException, RateLimitException, RequestException, RitoException {
+        String gameId = req.params("gameId");
+        long id;
+        try {
+            id = Long.valueOf(gameId);
+        } catch (NumberFormatException e) {
+            res.status(403);
+            return "Invalid id.";
+        }
+        CurrentGame cg = apiCache.getGame(id);
+        if (cg == null) {
+            res.status(404);
+            return "No such game.";
+        }
+
+        JSONObject jo = new JSONObject();
+        JSONArray ja = new JSONArray();
+        for (Participant p : cg.getParticipants()) {
+            JSONObject po = new JSONObject();
+            po.put("summonerId", p.getSummonerId());
+
+            List<League> leagues = apiCache.getLeagues(p.getSummonerId());
+            if (leagues != null) {
+                for (League l : leagues) {
+                    if (l.getQueue().equals("RANKED_SOLO_5x5")) {
+                        for (LeagueEntry le : l.getEntries()) {
+                            if (le.getPlayerOrTeamId().equals(p.getSummonerId() + "")) {
+                                po.put("tier", l.getTier());
+                                po.put("division", le.getDivision());
+                                po.put("lp", le.getLeaguePoints());
+                                if (le.getMiniSeries() != null) {
+                                    po.put("series", le.getMiniSeries().getProgress());
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            po.put("level", apiCache.getSummoner(p.getSummonerId()).getSummonerLevel());
+
+            for (RunePage rp : apiCache.getRunePages(p.getSummonerId()).getRunePages()) {
+                if (rp.isCurrent()) {
+                    String pageName = rp.getName();
+                    po.put("runePageName", (pageName.length() > 13
+                            ? pageName.substring(0, Math.min(10, pageName.length())) + "..."
+                            : pageName.substring(0, Math.min(13, pageName.length()))));
+                    po.put("runePageNameFull", pageName);
+                    Map<String, Double> stats = new HashMap<>();
+                    for (RuneSlot r : rp.getSlots()) {
+                        RuneInfo ri = runeMap.get((long) r.getRuneId());
+                        for (RuneStat rs : ri.getStats()) {
+                            Double d = stats.get(rs.getName());
+                            if (d == null) {
+                                d = 0.0;
+                            }
+                            stats.put(rs.getName(), d + rs.getValue());
+                        }
+                    }
+                    JSONArray sa = new JSONArray();
+                    for (Map.Entry<String, Double> e : stats.entrySet()) {
+                        JSONObject so = new JSONObject();
+                        String name = nameMap.get(e.getKey());
+                        so.put("name", name != null ? name.replace("%", "").trim() : e.getKey());
+                        so.put("value", (e.getKey().contains("Percent") ? (Math.round(e.getValue() * 1000.0) / 10.0) + "%" : Math.round(e.getValue() * 10.0) / 10.0));
+                        sa.add(so);
+                    }
+                    po.put("runeStats", sa);
+                    break;
+                }
+            }
+
+            ja.add(po);
+        }
+        jo.put("participants", ja);
+
+        res.type("application/json");
+
+        return jo.toJSONString();
+    }
+
+    private String handleSummonerStats(Request req, Response res) throws IOException, RateLimitException, RequestException, RitoException {
+        long id;
+        try {
+            id = Long.valueOf(req.params("gameId"));
+        } catch (NumberFormatException e) {
+            res.status(403);
+            return "Invalid game id.";
+        }
+        CurrentGame cg = apiCache.getGame(id);
+        if (cg == null) {
+            res.status(404);
+            return "No such game.";
+        }
+        try {
+            id = Long.valueOf(req.params("summonerId"));
+        } catch (NumberFormatException e) {
+            res.status(403);
+            return "Invalid summoner id.";
+        }
+        Participant p = null;
+        for (Participant pa : cg.getParticipants()) {
+            if (pa.getSummonerId() == id) {
+                p = pa;
+                break;
+            }
+        }
+        if(p == null){
+            res.status(403);
+            return "The summoner is not in the given game.";            
+        }
+        RankedStats rs = apiCache.getRankedStats(id);
+        if (rs == null) {
+            res.status(404);
+            return "No such summoner.";
+        }
+        List<PlayerStatsSummary> pssl = apiCache.getPlayerStats(id);
+
+        JSONObject po = new JSONObject();
+        
+        boolean yolostats = false;
+        for (PlayerStatsSummary pss : pssl) {
+            if (pss.getPlayerStatSummaryType().equals("RankedSolo5x5")) {
+                po.put("wins", pss.getWins());
+                po.put("losses", pss.getLosses());
+                yolostats = true;
+                break;
+            }
+        }
+        if (!yolostats) {
+            po.put("wins", 0);
+            po.put("losses", 0);
+        }
+        boolean found = false;
+        for (ChampionStats cs : rs.getChampions()) {
+            if (cs.getId() == p.getChampionId()) {
+                JSONObject ro = new JSONObject();
+                ro.put("averageKills", Math.round((double) cs.getTotalChampionKills() / (double) cs.getTotalSessionsPlayed() * 10.0) / 10.0 + "");
+                ro.put("averageDeaths", Math.round((double) cs.getTotalDeathsPerSession() / (double) cs.getTotalSessionsPlayed() * 10.0) / 10.0 + "");
+                ro.put("averageAssists", Math.round((double) cs.getTotalAssists() / (double) cs.getTotalSessionsPlayed() * 10.0) / 10.0 + "");
+                ro.put("kda", cs.getTotalDeathsPerSession() == 0 ? "Perfect KDA" : (Math.round((cs.getTotalAssists() + cs.getTotalChampionKills()) / (double) cs.getTotalDeathsPerSession() * 10.0) / 10.0) + " KDA");
+                ro.put("championWinRatio", (Math.round((cs.getTotalSessionsWon()) / (double) cs.getTotalSessionsPlayed() * 1000.0) / 10.0) + "%");
+                ro.put("championWins", cs.getTotalSessionsWon());
+                ro.put("championLosses", cs.getTotalSessionsLost());
+                po.put("ranked", ro);
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            JSONObject ro = new JSONObject();
+            ro.put("averageKills", "0.0");
+            ro.put("averageDeaths", "0.0");
+            ro.put("averageAssists", "0.0");
+            ro.put("kda", "0.0 KDA");
+            ro.put("championWinRatio", "0.0%");
+            ro.put("championWins", 0);
+            ro.put("championLosses", 0);
+            po.put("ranked", ro);
+        }
+        
+        
+        res.type("application/json");
+        
+        return po.toJSONString();
+    }
+
+    @Deprecated
     private String handleGameInfo(Request req, Response res) throws IOException, RateLimitException, RequestException, RitoException {
         System.out.println("--");
         Summoner s = api.getSummonerByName(URLDecoder.decode(req.params("summoner"), "utf-8"));
@@ -301,7 +547,7 @@ public class GameInfoBackend {
                         JSONObject so = new JSONObject();
                         String name = nameMap.get(e.getKey());
                         so.put("name", name != null ? name.replace("%", "").trim() : e.getKey());
-                        so.put("value", (e.getKey().contains("Percent") ? (Math.round(e.getValue() * 1000.0) / 10.0)+"%" : Math.round(e.getValue() * 10.0) / 10.0));
+                        so.put("value", (e.getKey().contains("Percent") ? (Math.round(e.getValue() * 1000.0) / 10.0) + "%" : Math.round(e.getValue() * 10.0) / 10.0));
                         sa.add(so);
                     }
                     po.put("runeStats", sa);
@@ -321,7 +567,7 @@ public class GameInfoBackend {
             }
             if (!yolostats) {
                 po.put("wins", 0);
-                po.put("losses", 0); 
+                po.put("losses", 0);
             }
 
             ja.add(po);
@@ -337,7 +583,7 @@ public class GameInfoBackend {
             banja.add(banjo);
         }
         jo.put("bans", banja);
-        
+
         jo.put("startTime", cg.getGameStartTime());
 
         res.type("application/json");

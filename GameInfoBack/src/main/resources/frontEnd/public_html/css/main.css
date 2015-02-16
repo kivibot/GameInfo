@@ -258,3 +258,14 @@ form {
     position: relative;
     left: 20px;
 }
+
+.masteries {
+    cursor: pointer;
+}
+
+.popover{
+    max-width: 100%;
+}
+.popover-content{
+    padding: 0;
+}

@@ -1,7 +1,7 @@
 var search;
 
 $(document).ready(function () {
-    function handleData(data) {
+    function handleDataOld(data) {
         setInfo(data.bigIcon, data.bigName, data.gameInfo);
         setTimeCounter(data.startTime);
         data.participant.forEach(function (p) {
@@ -19,9 +19,9 @@ $(document).ready(function () {
         $("#logo1").removeClass("logo1");
         $("#teams").show();
     }
-    lastRowT100 = false;
-    lastRowT200 = false;
-    function addSummoner(team, name, champIcon, spell1, spell2, s5, wins, losses, oc, dc, uc, kda, ak, ad, aa, cwr, cw, cl, rpname, rpnamef, hilight, runeStats) {
+    var lastRowT100 = false;
+    var lastRowT200 = false;
+    function addSummonerOld(team, name, champIcon, spell1, spell2, s5, wins, losses, oc, dc, uc, kda, ak, ad, aa, cwr, cw, cl, rpname, rpnamef, hilight, runeStats) {
         var rowClass;
         if (team === 100) {
             if (!lastRowT100) {
@@ -48,7 +48,7 @@ $(document).ready(function () {
             rsstr += "<br>" + rs.name + "<br>" + rs.value;
         });
 
-        row = $("<div class='row " + rowClass + "'></div>").loadTemplate($("#summonerRowTemplate"), {
+        var row = $("<div class='row " + rowClass + "'></div>").loadTemplate($("#summonerRowTemplate"), {
             summonerName: name,
             championIcon: realRoot + "img/champion/" + champIcon,
             summonerSpell1: realRoot + "img/spell/" + spell1,
@@ -73,11 +73,24 @@ $(document).ready(function () {
         });
         row.find(".runes").tooltip();
         $("#t" + team + "_summoners").append(row);
+        var more = $("<div class='collapse' data-toggle='collapse'>"
+                + "O____O"
+                + "</div>");
+        $("#t" + team + "_summoners").append(more);
+        row.click(function () {
+            more.collapse("toggle");
+        });
+        row.find(".masteries").popover({
+            content: "<img src='" + realRoot + "img/masteryback.png'>",
+            html: true,
+            placement: "left",
+            trigger: "hover"
+        });
     }
     function addBan(team, champ) {
         $("#t" + team + "_bans").append('<img src="' + realRoot + 'img/champion/' + champ + '">');
     }
-    function setInfo(icon, name, gameinfo) {
+    function setInfoOld(icon, name, gameinfo) {
         $("#bigIcon").attr("src", realRoot + "img/profileicon/" + icon);
         $("#bigName").text(name);
         $("#gameinfo").text(gameinfo);
@@ -100,6 +113,138 @@ $(document).ready(function () {
             $("#gameTime").text(m + ":" + s);
         }, 500);
     }
+    function addSummonerBasic(p) {
+        var rowClass;
+        if (p.team === 100) {
+            if (!lastRowT100) {
+                lastRowT100 = true;
+                rowClass = "cr2";
+            } else {
+                lastRowT100 = false;
+                rowClass = "cr1";
+            }
+        } else {
+            if (!lastRowT200) {
+                lastRowT200 = true;
+                rowClass = "cr2";
+            } else {
+                lastRowT200 = false;
+                rowClass = "cr1";
+            }
+        }
+        if (p.hilight) {
+            p.rowClass = "cr3";
+        }
+        var row = $("<div class='row " + rowClass + "'></div>").loadTemplate($("#summonerRowTemplate"), {
+            summonerName: p.summonerName,
+            championIcon: realRoot + "img/champion/" + p.championImage,
+            summonerSpell1: realRoot + "img/spell/" + p.spell1Image,
+            summonerSpell2: realRoot + "img/spell/" + p.spell2Image,
+            rankElementId: p.summonerId + "_rank",
+            winRateElementId: p.summonerId + "_winRate",
+            kdaElementId: p.summonerId + "_kda",
+            championWinRateElementId: p.summonerId + "_champWinRate",
+            runesElementId: p.summonerId + "_runes",
+            offenseCount: p.masteries.offense,
+            defenseCount: p.masteries.defense,
+            utilityCount: p.masteries.utility
+        });
+        $("#t" + p.team + "_summoners").append(row);
+    }
+    function handleCurrentGameData(data) {
+        console.log(data);
+        $("#bigIcon").attr("src", realRoot + "img/profileicon/" + data.bigIcon);
+        $("#bigName").text(data.bigName);
+        $("#gameinfo").text(data.infoLine);
+        setTimeCounter(data.startTime);
+
+        data.participants.forEach(function (p) {
+            addSummonerBasic(p);
+        });
+
+        $("#logo1").removeClass("logo1");
+        $("#teams").show();
+
+        $.ajax(realRoot + data.gameId + "/ranks").done(function (pd) {
+            console.log(pd);
+            pd.participants.forEach(function (p) {
+                var tier = "";
+                var rank = "";
+                if (p.tier !== undefined) {
+                    tier = p.tier.toLowerCase();
+                    rank = p.tier + " " + p.division + "<br>";
+                    if (p.series === undefined) {
+                        rank += p.lp + " LP";
+                    } else {
+                        rank += p.series;
+                    }
+                } else {
+                    rank = "LEVEL " + p.level;
+                }
+                $("#" + p.summonerId + "_rank").loadTemplate($("#summonerRankTemplate"), {
+                    tier: tier,
+                    seasonRank: rank
+                });
+                var rsstr = "<br>";
+                p.runeStats.forEach(function (rs) {
+                    rsstr += "<br>" + rs.name + "<br>" + rs.value;
+                });
+                $("#" + p.summonerId + "_runes").loadTemplate($("#summonerRunesTemplate"), {
+                    runePageName: p.runePageName,
+                    runePageInfo: p.runePageNameFull + rsstr,
+                }).find(".runes").tooltip();
+                $.ajax(realRoot + data.gameId + "/" + p.summonerId + "/stats").done(function (sd) {
+                    console.log(sd);
+
+
+                    $("#" + p.summonerId + "_winRate").loadTemplate($("#summonerWinRateTemplate"), {
+                        soloRankedWinRate: Math.round(sd.wins / Math.max(sd.wins + sd.losses, 1) * 1000) / 10 + "%",
+                        soloRankedWins: sd.wins,
+                        soloRankedLosses: sd.losses
+                    });
+                    $("#" + p.summonerId + "_kda").loadTemplate($("#summonerKDATemplate"), {
+                        championKDA: sd.ranked.kda,
+                        championKills: sd.ranked.averageKills,
+                        championDeaths: sd.ranked.averageDeaths,
+                        championAssists: sd.ranked.averageAssists
+                    });
+
+                    $("#" + p.summonerId + "_champWinRate").loadTemplate($("#summonerChampWinRateTemplate"), {
+                        championWinRate: sd.ranked.championWinRatio,
+                        championWins: sd.ranked.championWins,
+                        championLosses: sd.ranked.championLosses
+                    });
+
+                }).fail(function (data) {
+                    console.log(data);
+                    $("#searchButton").addClass("btn-danger");
+                    setTimeout(function () {
+                        $("#searchButton").removeClass("btn-danger");
+                    }, 2000);
+                    showError(data.status, data.responseText);
+                }).complete(function () {
+                    searching = false;
+                    $("#searchButton").removeAttr("disabled");
+                    $("#searchButtonImage").toggleClass("spinner");
+                    $("#searchButtonImage").toggleClass("glyphicon-refresh");
+                    $("#searchButtonText").text("Search");
+                });
+            });
+        }).fail(function (data) {
+            console.log(data);
+            $("#searchButton").addClass("btn-danger");
+            setTimeout(function () {
+                $("#searchButton").removeClass("btn-danger");
+            }, 2000);
+            showError(data.status, data.responseText);
+        }).complete(function () {
+            searching = false;
+            $("#searchButton").removeAttr("disabled");
+            $("#searchButtonImage").toggleClass("spinner");
+            $("#searchButtonImage").toggleClass("glyphicon-refresh");
+            $("#searchButtonText").text("Search");
+        });
+    }
     function searchSummoner(name) {
         localStorage.searchValue = name;
         $("#summonerInput").val(localStorage.searchValue);
@@ -108,9 +253,8 @@ $(document).ready(function () {
         $("#searchButtonImage").toggleClass("glyphicon-refresh");
         $("#searchButtonText").text("Searching")
         searching = true;
-        $.ajax(realRoot + name + "/curgame/").done(function (data) {
-            console.log(data);
-            handleData(data);
+        $.ajax(realRoot + name + "/current").done(function (data) {
+            handleCurrentGameData(data);
         }).fail(function (data) {
             console.log(data)
             $("#searchButton").addClass("btn-danger");
@@ -135,6 +279,5 @@ $(document).ready(function () {
     if (localStorage.searchValue !== undefined) {
         $("#summonerInput").val(localStorage.searchValue);
     }
-
 });
 console.log(realRoot)

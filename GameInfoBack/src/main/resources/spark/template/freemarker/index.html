@@ -25,125 +25,145 @@
         </#if> 
         <script type="text/html" id="summonerRowTemplate">
         <div class="col-xs-2 vc grey1">
-                <h4 data-content="summonerName"></h4>                   
-    </div>           
-    <div class="col-xs-1 vc">
-                <img class="fitted" data-src="championIcon">
-        <img class="fitted2" data-src="summonerSpell1">
-        <img class="fitted2" data-src="summonerSpell2">       
-    </div>
-        <div class="col-xs-2 vc grey1 middle"><div data-class="tier"></div><span data-content="seasonRank"></span></div>
-    <div class="col-xs-1 vc grey1"></div>
-    <div class="col-xs-1 vc middle">
-                &nbsp;<span class="grey1" data-content="soloRankedWinRate"></span>
-        <br>
-        <span class="green1" data-content="soloRankedWins"></span> / <span class="red1" data-content="soloRankedLosses"></span>
-    </div>
-    <div class="col-xs-1 vc middle">
-                <span class="grey1" data-content="championKDA"></span>
-                <br>
-        <span class="green1" data-content="championKills"></span> / <span class="red1" data-content="championDeaths"></span> / <span class="blue1" data-content="championAssists"></span>
-    </div>
-    <div class="col-xs-1 vc grey1 middle">
-                &nbsp;<span class="grey1" data-content="championWinRate"></span>   
+            <h4 data-content="summonerName"></h4>                   
+        </div>           
+        <div class="col-xs-1 vc">
+            <img class="fitted" data-src="championIcon">
+            <img class="fitted2" data-src="summonerSpell1">
+            <img class="fitted2" data-src="summonerSpell2">       
+        </div>
+        <div class="col-xs-2 vc grey1 middle" data-id="rankElementId">
+            <span class="glyphicon glyphicon-refresh spinner" aria-hidden="true"></span>
+        </div>
+        <div class="col-xs-1 vc middle">
+        </div>
+        <div class="col-xs-1 vc middle" data-id="winRateElementId">
+            <span class="glyphicon glyphicon-refresh spinner" aria-hidden="true"></span>
+        </div>
+        <div class="col-xs-1 vc middle" data-id="kdaElementId">
+            <span class="glyphicon glyphicon-refresh spinner" aria-hidden="true"></span>
+        </div>
+        <div class="col-xs-1 vc middle" data-id="championWinRateElementId">
+            <span class="glyphicon glyphicon-refresh spinner" aria-hidden="true"></span>
+        </div>
+        <div class="col-xs-1 vc middle" data-id="runesElementId">
+            <span class="glyphicon glyphicon-refresh spinner" aria-hidden="true"></span>
+        </div>
+        <div class="col-xs-1 vc middle masteries">
+            <span class="red1" data-content="offenseCount"></span> / <span class="blue1" data-content="defenseCount"></span> / <span class="green1" data-content="utilityCount"></span>
+        </div>
+    </script>  
+
+    <script type="text/html" id="summonerRankTemplate">
+        <div data-class="tier"></div><span data-content="seasonRank"></span>
+    </script>
+    <script type="text/html" id="summonerRunesTemplate">
+        <span class="runes" data-toggle="tooltip" data-placement="bottom" data-html=true style="cursor: pointer;" data-template-bind='[{"attribute": "content", "value": "runePageName"},{"attribute": "title", "value": "runePageInfo"}]'></span>
+    </script>
+    <script type="text/html" id="summonerChampWinRateTemplate">
+        <span>&nbsp;</span><span class="grey1" data-content="championWinRate"></span>   
         <br>
         <span class="green1" data-content="championWins"></span> / <span class="red1" data-content="championLosses"></span>
-    </div>
-    <div class="col-xs-1 vc middle">
-                <span class="runes" data-toggle="tooltip" data-placement="bottom" data-html=true style="cursor: pointer;" data-template-bind='[{"attribute": "content", "value": "runePageName"},{"attribute": "title", "value": "runePageInfo"}]'></span>
-    </div>
-    <div class="col-xs-1 vc middle">
-                <span class="red1" data-content="offenseCount"></span> / <span class="blue1" data-content="defenseCount"></span> / <span class="green1" data-content="utilityCount"></span>
-    </div>
-        </script>  
-    </head> 
-    <body>
-        <div class="container maincont">
-            <div id="alerts"></div>
-            <h1 class="col-xs-2 logo fr logo1" id="logo1">KiviBot</h1>
-            <div id="teams" style="display: none">
-                <div class="row">
-                    <img class="col-xs-1 sicon" id="bigIcon">
-                    <h2 class="col-xs-7 bigNameContainer"><span id="bigName"></span> <small id="gameinfo"></small></h2>            
-                </div>
-                <div id="t100">
-                    <div class="row rowtop2">
-                        <div class="col-xs-2 vc">Name</div>
-                        <div class="col-xs-1 vc">Champion</div>
-                        <div class="col-xs-2 vc middle">Season 5 Rank</div>
-                        <div class="col-xs-1 vc middle"></div>
-                        <div class="col-xs-1 vc middle">Solo ranked win rate</div>
-                        <div class="col-xs-1 vc middle">Champion KDA</div>
-                        <div class="col-xs-1 vc middle">Champion win rate</div>
-                        <div class="col-xs-1 vc middle">Runes</div>
-                        <div class="col-xs-1 vc middle">Masteries</div>
-                    </div>
+    </script>
+    <script type="text/html" id="summonerKDATemplate">
+        <span class="grey1" data-content="championKDA"></span>
+        <br>
+        <span class="green1" data-content="championKills"></span> / <span class="red1" data-content="championDeaths"></span> / <span class="blue1" data-content="championAssists"></span>
+    </script>
+    <script type="text/html" id="summonerWinRateTemplate">
+                <span>&nbsp;</span><span class="grey1" data-content="soloRankedWinRate"></span>
+        <br>
+        <span class="green1" data-content="soloRankedWins"></span> / <span class="red1" data-content="soloRankedLosses"></span>
+    </script>
 
-                    <div id="t100_summoners">
-                    </div>
-
-                    <div class="row rowtop1 tr">                    
-                        <div class="col-xs-7 vc">
-                            &nbsp;<br>&nbsp;
-                        </div>
-                        <div class="col-xs-2 vc">
-                            Banned champions:
-                        </div>
-                        <div class="col-xs-2 vc bans" id="t100_bans">
-                        </div>
-                    </div>
+</head> 
+<body>
+    <div class="container maincont">
+        <div id="alerts"></div>
+        <h1 class="col-xs-2 logo fr logo1" id="logo1">KiviBot</h1>
+        <div id="teams" style="display: none">
+            <div class="row">
+                <img class="col-xs-1 sicon" id="bigIcon">
+                <h2 class="col-xs-7 bigNameContainer"><span id="bigName"></span> <small id="gameinfo"></small></h2>            
+            </div>
+            <div id="t100">
+                <div class="row rowtop2">
+                    <div class="col-xs-2 vc">Name</div>
+                    <div class="col-xs-1 vc">Champion</div>
+                    <div class="col-xs-2 vc middle">Season 5 Rank</div>
+                    <div class="col-xs-1 vc middle"></div>
+                    <div class="col-xs-1 vc middle">Solo ranked win rate</div>
+                    <div class="col-xs-1 vc middle">Champion KDA</div>
+                    <div class="col-xs-1 vc middle">Champion win rate</div>
+                    <div class="col-xs-1 vc middle">Runes</div>
+                    <div class="col-xs-1 vc middle">Masteries</div>
                 </div>
 
-                <div class="row">
-                    <div class="col-xs-5"></div>
-                    <div class="col-xs-2 tc">
-                        <h1 class="vs">vs.</h1>
-                    </div>    
-                    <div class="col-xs-3"></div>           
-                    <div class="col-xs-2 tc">
-                        <h1 class="vs" id="gameTime">0:00</h1>
-                    </div>
+                <div id="t100_summoners">
                 </div>
 
-                <div id="t200">
-                    <div class="row rowtop4">
-                        <div class="col-xs-2 vc">Name</div>
-                        <div class="col-xs-1 vc">Champion</div>
-                        <div class="col-xs-2 vc middle">Season 5 Rank</div>
-                        <div class="col-xs-1 vc middle"></div>
-                        <div class="col-xs-1 vc middle">Solo ranked win rate</div>
-                        <div class="col-xs-1 vc middle">Champion KDA</div>
-                        <div class="col-xs-1 vc middle">Champion win rate</div>
-                        <div class="col-xs-1 vc middle">Runes</div>
-                        <div class="col-xs-1 vc middle">Masteries</div>
+                <div class="row rowtop1 tr">                    
+                    <div class="col-xs-7 vc">
+                        &nbsp;<br>&nbsp;
                     </div>
-                    <div id="t200_summoners">
+                    <div class="col-xs-2 vc">
+                        Banned champions:
                     </div>
-                    <div class="row rowtop3 tr">                    
-                        <div class="col-xs-7 vc">
-                            &nbsp;<br>&nbsp;
-                        </div>
-                        <div class="col-xs-2 vc">
-                            Banned champions:
-                        </div>
-                        <div class="col-xs-2 vc bans" id="t200_bans">
-                        </div>
+                    <div class="col-xs-2 vc bans" id="t100_bans">
                     </div>
                 </div>
             </div>
+
             <div class="row">
-                <form action="${realRoot}" method="get">
-                    <div class="col-xs-3 input-group searchArea">
-                        <input type="text" name="summoner" class="form-control" id="summonerInput" placeholder="Summoner">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" id="searchButton" type="submit">
-                                <span class="glyphicon glyphicon-search" aria-hidden="true" id="searchButtonImage"></span>
-                                <span id="searchButtonText">Search</span>
-                            </button>
-                        </span>
+                <div class="col-xs-5"></div>
+                <div class="col-xs-2 tc">
+                    <h1 class="vs">vs.</h1>
+                </div>    
+                <div class="col-xs-3"></div>           
+                <div class="col-xs-2 tc">
+                    <h1 class="vs" id="gameTime">0:00</h1>
+                </div>
+            </div>
+
+            <div id="t200">
+                <div class="row rowtop4">
+                    <div class="col-xs-2 vc">Name</div>
+                    <div class="col-xs-1 vc">Champion</div>
+                    <div class="col-xs-2 vc middle">Season 5 Rank</div>
+                    <div class="col-xs-1 vc middle"></div>
+                    <div class="col-xs-1 vc middle">Solo ranked win rate</div>
+                    <div class="col-xs-1 vc middle">Champion KDA</div>
+                    <div class="col-xs-1 vc middle">Champion win rate</div>
+                    <div class="col-xs-1 vc middle">Runes</div>
+                    <div class="col-xs-1 vc middle">Masteries</div>
+                </div>
+                <div id="t200_summoners">
+                </div>
+                <div class="row rowtop3 tr">                    
+                    <div class="col-xs-7 vc">
+                        &nbsp;<br>&nbsp;
                     </div>
-                </form>
+                    <div class="col-xs-2 vc">
+                        Banned champions:
+                    </div>
+                    <div class="col-xs-2 vc bans" id="t200_bans">
+                    </div>
+                </div>
             </div>
         </div>
-    </body>
+        <div class="row">
+            <form action="${realRoot}" method="get">
+                <div class="col-xs-3 input-group searchArea">
+                    <input type="text" name="summoner" class="form-control" id="summonerInput" placeholder="Summoner">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" id="searchButton" type="submit">
+                            <span class="glyphicon glyphicon-search" aria-hidden="true" id="searchButtonImage"></span>
+                            <span id="searchButtonText">Search</span>
+                        </button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
 </html>
