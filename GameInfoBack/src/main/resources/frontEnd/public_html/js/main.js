@@ -222,12 +222,6 @@ $(document).ready(function () {
                         $("#searchButton").removeClass("btn-danger");
                     }, 2000);
                     showError(data.status, data.responseText);
-                }).complete(function () {
-                    searching = false;
-                    $("#searchButton").removeAttr("disabled");
-                    $("#searchButtonImage").toggleClass("spinner");
-                    $("#searchButtonImage").toggleClass("glyphicon-refresh");
-                    $("#searchButtonText").text("Search");
                 });
             });
         }).fail(function (data) {
@@ -237,12 +231,6 @@ $(document).ready(function () {
                 $("#searchButton").removeClass("btn-danger");
             }, 2000);
             showError(data.status, data.responseText);
-        }).complete(function () {
-            searching = false;
-            $("#searchButton").removeAttr("disabled");
-            $("#searchButtonImage").toggleClass("spinner");
-            $("#searchButtonImage").toggleClass("glyphicon-refresh");
-            $("#searchButtonText").text("Search");
         });
     }
     function searchSummoner(name) {
