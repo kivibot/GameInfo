@@ -3,6 +3,7 @@ var search;
 $(document).ready(function () {
     function handleData(data) {
         setInfo(data.bigIcon, data.bigName, data.gameInfo);
+        setTimeCounter(data.startTime);
         data.participant.forEach(function (p) {
             addSummoner(p.team, p.name, p.championImage, p.spell1Image, p.spell2Image,
                     p.s5, p.wins, p.losses,
@@ -21,51 +22,57 @@ $(document).ready(function () {
     lastRowT100 = false;
     lastRowT200 = false;
     function addSummoner(team, name, champIcon, spell1, spell2, s5, wins, losses, oc, dc, uc, kda, ak, ad, aa, cwr, cw, cl, rpname, rpnamef, hilight, runeStats) {
-        s = $("#template .row_summoner").clone();
+        var rowClass;
         if (team === 100) {
             if (!lastRowT100) {
-                s.addClass("cr2");
                 lastRowT100 = true;
+                rowClass = "cr2";
             } else {
-                s.addClass("cr1");
                 lastRowT100 = false;
+                rowClass = "cr1";
             }
         } else {
             if (!lastRowT200) {
-                s.addClass("cr2");
                 lastRowT200 = true;
+                rowClass = "cr2";
             } else {
-                s.addClass("cr1");
                 lastRowT200 = false;
+                rowClass = "cr1";
             }
         }
         if (hilight) {
-            s.addClass("cr3");
+            rowClass = "cr3";
         }
-        s.find(".row_name").text(name);
-        s.find(".champ_icon").attr("src", realRoot + "img/champion/" + champIcon);
-        s.find(".spell1").attr("src", realRoot + "img/spell/" + spell1);
-        s.find(".spell2").attr("src", realRoot + "img/spell/" + spell2);
-        s.find(".row_s5").html(s5);
-        s.find(".moc").text(oc);
-        s.find(".mdc").text(dc);
-        s.find(".muc").text(uc);
-        s.find(".kda").text(kda);
-        s.find(".kda_k").text(ak);
-        s.find(".kda_d").text(ad);
-        s.find(".kda_a").text(aa);
-        s.find(".winRate").text((Math.round(wins / Math.max(wins + losses, 1) * 1000) / 10) + "%");
-        s.find(".wins").text(wins);
-        s.find(".losses").text(losses);
-        s.find(".champWins .rate").text(cwr);
-        s.find(".champWins .wins").text(cw);
-        s.find(".champWins .losses").text(cl);
         var rsstr = "<br>";
         runeStats.forEach(function (rs) {
             rsstr += "<br>" + rs.name + "<br>" + rs.value;
         });
-        s.find(".runes").text(rpname).attr("title", rpnamef + rsstr).tooltip();
-        $("#t" + team + "_summoners").append(s);
+
+        row = $("<div class='row " + rowClass + "'></div>").loadTemplate($("#summonerRowTemplate"), {
+            summonerName: name,
+            championIcon: realRoot + "img/champion/" + champIcon,
+            summonerSpell1: realRoot + "img/spell/" + spell1,
+            summonerSpell2: realRoot + "img/spell/" + spell2,
+            tier: s5.split(" ")[0].toLowerCase(),
+            seasonRank: s5,
+            soloRankedWinRate: (Math.round(wins / Math.max(wins + losses, 1) * 1000) / 10) + "%",
+            soloRankedWins: wins,
+            soloRankedLosses: losses,
+            championKDA: kda,
+            championKills: ak,
+            championDeaths: ad,
+            championAssists: aa,
+            championWinRate: cwr,
+            championWins: cw,
+            championLosses: cl,
+            runePageName: rpname,
+            runePageInfo: rpname + rsstr,
+            offenseCount: oc,
+            defenseCount: dc,
+            utilityCount: uc
+        });
+        row.find(".runes").tooltip();
+        $("#t" + team + "_summoners").append(row);
     }
     function addBan(team, champ) {
         $("#t" + team + "_bans").append('<img src="' + realRoot + 'img/champion/' + champ + '">');
@@ -81,14 +88,18 @@ $(document).ready(function () {
                 + '<strong>' + strong + '</strong> ' + info + '</div>');
 
     }
-//    function cleanUp() {
-//        $("#t100_summoners .row_summoner").remove();
-//        $("#t200_summoners .row_summoner").remove();
-//        $("#t100_bans img").remove();
-//        $("#t200_bans img").remove();
-//        lastRowT200 = false;
-//        lastRowT100 = false;
-//    }
+    function setTimeCounter(start) {
+        setInterval(function () {
+            time = new Date().getTime() - start;
+            ms = time % 1000;
+            s = ((time - ms) / 1000) % 60;
+            m = (time - time % 60000) / 60000;
+            if (s < 10) {
+                s = "0" + s;
+            }
+            $("#gameTime").text(m + ":" + s);
+        }, 500);
+    }
     function searchSummoner(name) {
         localStorage.searchValue = name;
         $("#summonerInput").val(localStorage.searchValue);
@@ -99,11 +110,6 @@ $(document).ready(function () {
         searching = true;
         $.ajax(realRoot + name + "/curgame/").done(function (data) {
             console.log(data);
-//            $("#searchButton").addClass("btn-success");
-//            setTimeout(function () {
-//                $("#searchButton").removeClass("btn-success");
-//            }, 2000);
-            //cleanUp();
             handleData(data);
         }).fail(function (data) {
             console.log(data)
@@ -126,11 +132,9 @@ $(document).ready(function () {
         }, 6000);
     }
     search = searchSummoner;
-    //searchSummoner("tuk1");
     if (localStorage.searchValue !== undefined) {
         $("#summonerInput").val(localStorage.searchValue);
     }
-    //setInfo("548.png", "AlleyCaesar", "Summoner's Rift, Solo Ranked 5v5, EUNE");
-    //addSummoner(1, "KiviBot", "Azir.png","SummonerFlash.png", "SummonerHeal.png", "S4", 21, 0, 9);
+
 });
 console.log(realRoot)

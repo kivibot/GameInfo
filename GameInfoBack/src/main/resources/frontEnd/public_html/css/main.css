@@ -188,3 +188,73 @@ form {
     padding-top: 15px;
     min-width: 940px;
 }
+
+.bronze {
+    width: 40px;
+    height: 40px;
+    background-size: 100% 100%;
+    background-image: url("../img/tier/bronze.png");
+    float: left;
+    position: relative;
+    left: 20px;
+}
+
+.silver {
+    width: 40px;
+    height: 40px;
+    background-size: 100% 100%;
+    background-image: url("../img/tier/silver.png");
+    float: left;
+    position: relative;
+    left: 20px;
+}
+
+.gold {
+    width: 40px;
+    height: 40px;
+    background-size: 100% 100%;
+    background-image: url("../img/tier/gold.png");
+    float: left;
+    position: relative;
+    left: 20px;
+}
+
+.platinum {
+    width: 40px;
+    height: 40px;
+    background-size: 100% 100%;
+    background-image: url("../img/tier/platinum.png");
+    float: left;
+    position: relative;
+    left: 20px;
+}
+
+.diamond {
+    width: 40px;
+    height: 40px;
+    background-size: 100% 100%;
+    background-image: url("../img/tier/diamond.png");
+    float: left;
+    position: relative;
+    left: 20px;
+}
+
+.master {
+    width: 40px;
+    height: 40px;
+    background-size: 100% 100%;
+    background-image: url("../img/tier/master.png");
+    float: left;
+    position: relative;
+    left: 20px;
+}
+
+.challenger {
+    width: 40px;
+    height: 40px;
+    background-size: 100% 100%;
+    background-image: url("../img/tier/challenger.png");
+    float: left;
+    position: relative;
+    left: 20px;
+}

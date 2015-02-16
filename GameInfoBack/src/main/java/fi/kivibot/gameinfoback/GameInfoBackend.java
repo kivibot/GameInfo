@@ -337,6 +337,8 @@ public class GameInfoBackend {
             banja.add(banjo);
         }
         jo.put("bans", banja);
+        
+        jo.put("startTime", cg.getGameStartTime());
 
         res.type("application/json");
 
