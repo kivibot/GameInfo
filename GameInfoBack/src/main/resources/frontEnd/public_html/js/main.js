@@ -161,6 +161,10 @@ $(document).ready(function () {
         data.participants.forEach(function (p) {
             addSummonerBasic(p);
         });
+        data.bannedChampions.forEach(function (p) {
+            addBan(p.team, p.champion);
+        });
+
 
         $("#logo1").removeClass("logo1");
         $("#teams").show();
