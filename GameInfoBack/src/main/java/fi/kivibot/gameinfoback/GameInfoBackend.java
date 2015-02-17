@@ -137,6 +137,7 @@ public class GameInfoBackend {
             Map<String, Object> attributes = new HashMap<>();
             attributes.put("autoFind", false);
             attributes.put("realRoot", "");
+            attributes.put("analytics", "UA-39810702-2");
             return new ModelAndView(attributes, "index.html");
         }, new FreeMarkerEngine());
         Spark.get("/:summoner", (req, res) -> {
@@ -154,6 +155,7 @@ public class GameInfoBackend {
                 attributes.put("autoFind", false);
             }
             attributes.put("realRoot", "");
+            attributes.put("analytics", "UA-39810702-2");
             return new ModelAndView(attributes, "index.html");
         }, new FreeMarkerEngine());
         Spark.get("/:summoner/", (req, res) -> {
@@ -166,6 +168,7 @@ public class GameInfoBackend {
                 attributes.put("autoFind", false);
             }
             attributes.put("realRoot", "../");
+            attributes.put("analytics", "UA-39810702-2");
             return new ModelAndView(attributes, "index.html");
         }, new FreeMarkerEngine());
         Spark.get(":summoner/current", this::handleCurrentGame);

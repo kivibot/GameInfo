@@ -111,7 +111,7 @@ $(document).ready(function () {
                 s = "0" + s;
             }
             $("#gameTime").text(m + ":" + s);
-        }, 500);
+        }, 300);
     }
     function addSummonerBasic(p) {
         var rowClass;
