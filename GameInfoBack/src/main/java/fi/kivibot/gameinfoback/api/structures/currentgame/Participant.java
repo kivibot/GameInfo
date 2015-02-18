@@ -1,5 +1,7 @@
-package fi.kivibot.gameinfoback.api.structures;
+package fi.kivibot.gameinfoback.api.structures.currentgame;
 
+import fi.kivibot.gameinfoback.api.structures.Mastery;
+import fi.kivibot.gameinfoback.api.structures.Rune;
 import java.util.List;
 
 /**

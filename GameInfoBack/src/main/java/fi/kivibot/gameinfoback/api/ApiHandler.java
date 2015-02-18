@@ -3,14 +3,14 @@ package fi.kivibot.gameinfoback.api;
 import fi.kivibot.gameinfoback.api.exceptions.RateLimitException;
 import fi.kivibot.gameinfoback.api.exceptions.RequestException;
 import fi.kivibot.gameinfoback.api.structures.MiniSeries;
-import fi.kivibot.gameinfoback.api.structures.Participant;
+import fi.kivibot.gameinfoback.api.structures.currentgame.Participant;
 import fi.kivibot.gameinfoback.api.structures.LeagueEntry;
 import fi.kivibot.gameinfoback.api.structures.Rune;
 import fi.kivibot.gameinfoback.api.structures.Mastery;
 import fi.kivibot.gameinfoback.api.exceptions.RitoException;
 import fi.kivibot.gameinfoback.api.structures.BannedChampion;
 import fi.kivibot.gameinfoback.api.structures.ChampionStats;
-import fi.kivibot.gameinfoback.api.structures.CurrentGame;
+import fi.kivibot.gameinfoback.api.structures.currentgame.CurrentGame;
 import fi.kivibot.gameinfoback.api.structures.League;
 import fi.kivibot.gameinfoback.api.structures.PlayerStatsSummary;
 import fi.kivibot.gameinfoback.api.structures.RankedStats;
@@ -69,14 +69,14 @@ public class ApiHandler {
         this.apiKey = apiKey;
     }
 
-    public Summoner getSummonerByName(String name)
+    public Summoner getSummonerByName(Platform p, String name)
             throws IOException, RateLimitException, RequestException, RitoException {
         List<String> l = new ArrayList<>();
         l.add(name);
-        return getSummonersByNames(l).get(name.replace(" ", "").toLowerCase());
+        return getSummonersByNames(p, l).get(name.replace(" ", "").toLowerCase());
     }
 
-    public Map<String, Summoner> getSummonersByNames(List<String> names)
+    public Map<String, Summoner> getSummonersByNames(Platform p, List<String> names)
             throws IOException, RateLimitException, RequestException, RitoException {
 
         String path = "v1.4/summoner/by-name/";
@@ -86,7 +86,7 @@ public class ApiHandler {
                 path += ",";
             }
         }
-        ApiResponse resp = get(formApiUrl(path));
+        ApiResponse resp = get(formApiUrl(p, path));
 
         //Error handling
         switch (resp.code) {
@@ -121,10 +121,10 @@ public class ApiHandler {
         return m;
     }
 
-    public CurrentGame getCurrentGame(Summoner s)
+    public CurrentGame getCurrentGame(Platform p, Summoner s)
             throws IOException, RateLimitException, RequestException, RitoException {
 
-        ApiResponse resp = get(formObserverUrl("getSpectatorGameInfo/{platformId}/" + s.getId()));
+        ApiResponse resp = get(formObserverUrl(p, "getSpectatorGameInfo/{platformId}/" + s.getId()));
 
         //Error handling
         switch (resp.code) {
@@ -195,7 +195,7 @@ public class ApiHandler {
                 (String) jo.get("platformId"));
     }
 
-    public Map<String, List<League>> getLeaguesEntry(List<Long> ids)
+    public Map<String, List<League>> getLeaguesEntry(Platform p, List<Long> ids)
             throws IOException, RateLimitException, RequestException, RitoException {
 
         String path = "v2.5/league/by-summoner/";
@@ -206,7 +206,7 @@ public class ApiHandler {
             }
         }
 
-        ApiResponse resp = get(formApiUrl(path + "/entry"));
+        ApiResponse resp = get(formApiUrl(p, path + "/entry"));
 
         //Error handling
         switch (resp.code) {
@@ -268,10 +268,10 @@ public class ApiHandler {
         return lm;
     }
 
-    public RankedStats getRankedStats(long id)
+    public RankedStats getRankedStats(Platform p, long id)
             throws IOException, RateLimitException, RequestException, RitoException {
 
-        ApiResponse resp = get(formApiUrl("v1.3/stats/by-summoner/" + id + "/ranked"));
+        ApiResponse resp = get(formApiUrl(p, "v1.3/stats/by-summoner/" + id + "/ranked"));
 
         //Error handling
         switch (resp.code) {
@@ -310,7 +310,7 @@ public class ApiHandler {
         return new RankedStats(champions, (Long) jo.get("modifyDate"), (Long) jo.get("summonerId"));
     }
 
-    public Map<String, RunePages> getRunes(List<Long> ids)
+    public Map<String, RunePages> getRunes(Platform p, List<Long> ids)
             throws IOException, RateLimitException, RequestException, RitoException {
 
         String path = "v1.4/summoner/";
@@ -321,7 +321,7 @@ public class ApiHandler {
             }
         }
 
-        ApiResponse resp = get(formApiUrl(path + "/runes"));
+        ApiResponse resp = get(formApiUrl(p, path + "/runes"));
 
         //Error handling
         switch (resp.code) {
@@ -363,9 +363,9 @@ public class ApiHandler {
         return lm;
     }
 
-    public List<PlayerStatsSummary> getStatsSummary(long id) throws IOException, RequestException, RateLimitException, RitoException {
+    public List<PlayerStatsSummary> getStatsSummary(Platform p, long id) throws IOException, RequestException, RateLimitException, RitoException {
 
-        ApiResponse resp = get(formApiUrl("v1.3/stats/by-summoner/" + id + "/summary"));
+        ApiResponse resp = get(formApiUrl(p, "v1.3/stats/by-summoner/" + id + "/summary"));
 
         //Error handling
         switch (resp.code) {
@@ -397,12 +397,12 @@ public class ApiHandler {
         return sl;
     }
 
-    private String formApiUrl(String path) {
-        return "https://eune.api.pvp.net/api/lol/eune/" + path + "?api_key=" + apiKey;
+    private String formApiUrl(Platform p, String path) {
+        return "https://" + p.getRegion() + ".api.pvp.net/api/lol/" + p.getRegion() + "/" + path + "?api_key=" + apiKey;
     }
 
-    private String formObserverUrl(String path) {
-        return "https://eune.api.pvp.net/observer-mode/rest/consumer/" + path.replace("{platformId}", "EUN1") + "?api_key=" + apiKey;
+    private String formObserverUrl(Platform p, String path) {
+        return "https://" + p.getRegion() + ".api.pvp.net/observer-mode/rest/consumer/" + path.replace("{platformId}", p.getId()) + "?api_key=" + apiKey;
     }
 
     private boolean apiOK = true;
