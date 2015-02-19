@@ -1,24 +1,6 @@
 var search;
 
 $(document).ready(function () {
-    function handleDataOld(data) {
-        setInfo(data.bigIcon, data.bigName, data.gameInfo);
-        setTimeCounter(data.startTime);
-        data.participant.forEach(function (p) {
-            addSummoner(p.team, p.name, p.championImage, p.spell1Image, p.spell2Image,
-                    p.s5, p.wins, p.losses,
-                    p.masteries.oc, p.masteries.dc, p.masteries.uc,
-                    p.ranked.kda, p.ranked.averageKills, p.ranked.averageDeaths,
-                    p.ranked.averageAssists, p.ranked.championWinRatio, p.ranked.championWins,
-                    p.ranked.championLosses, p.runePageName, p.runePageNameFull, p.hilight,
-                    p.runeStats);
-        });
-        data.bans.forEach(function (p) {
-            addBan(p.team, p.champion);
-        });
-        $("#logo1").removeClass("logo1");
-        $("#teams").show();
-    }
     var lastRowT100 = false;
     var lastRowT200 = false;
     function addSummonerOld(team, name, champIcon, spell1, spell2, s5, wins, losses, oc, dc, uc, kda, ak, ad, aa, cwr, cw, cl, rpname, rpnamef, hilight, runeStats) {
@@ -47,7 +29,6 @@ $(document).ready(function () {
         runeStats.forEach(function (rs) {
             rsstr += "<br>" + rs.name + "<br>" + rs.value;
         });
-
         var row = $("<div class='row " + rowClass + "'></div>").loadTemplate($("#summonerRowTemplate"), {
             summonerName: name,
             championIcon: realRoot + "img/champion/" + champIcon,
@@ -90,16 +71,10 @@ $(document).ready(function () {
     function addBan(team, champ) {
         $("#t" + team + "_bans").append('<img src="' + realRoot + 'img/champion/' + champ + '">');
     }
-    function setInfoOld(icon, name, gameinfo) {
-        $("#bigIcon").attr("src", realRoot + "img/profileicon/" + icon);
-        $("#bigName").text(name);
-        $("#gameinfo").text(gameinfo);
-    }
     function showError(strong, info) {
         $("#alerts").append('<div class="alert alert-danger alert-dismissible fade in" id="alert0" role="alert">'
                 + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
                 + '<strong>' + strong + '</strong> ' + info + '</div>');
-
     }
     function setTimeCounter(start) {
         setInterval(function () {
@@ -145,9 +120,23 @@ $(document).ready(function () {
             kdaElementId: p.summonerId + "_kda",
             championWinRateElementId: p.summonerId + "_champWinRate",
             runesElementId: p.summonerId + "_runes",
+            masteriesElementId: p.summonerId + "_masteries",
             offenseCount: p.masteries.offense,
             defenseCount: p.masteries.defense,
             utilityCount: p.masteries.utility
+        });
+        row.find("#" + p.summonerId + "_masteries").popover({
+            content: "<img src='" + realRoot + "img/masteryback.png'>"
+                    + '<img class="" src="img/spell/SummonerHeal.png" style="width: 48px; position: absolute; left: 25px; top: 15px;">'
+                    + '<img class="" src="img/spell/SummonerHeal.png" style="width: 48px; position: absolute; left: 85px; top: 88px;">'
+                    + '<img class="" src="img/spell/SummonerHeal.png" style="width: 48px; position: absolute; left: 145px; top: 157px;">'
+                    + '<img class="" src="img/spell/SummonerHeal.png" style="width: 48px; position: absolute; left: 205px; top: 229px;">'
+                    + '<img class="" src="img/spell/SummonerHeal.png" style="width: 48px; position: absolute; left: 25px; top: 300px;">'
+                    + '<img class="" src="img/spell/SummonerHeal.png" style="width: 48px; position: absolute; left: 85px; top: 372px;">'
+                    + '<h3 style="position: absolute; left: 25px; top: 420px; color: #fff;">Offense: 21</h3>',
+            html: true,
+            placement: "left",
+            trigger: "click"
         });
         $("#t" + p.team + "_summoners").append(row);
     }
@@ -157,18 +146,14 @@ $(document).ready(function () {
         $("#bigName").text(data.bigName);
         $("#gameinfo").text(data.infoLine);
         setTimeCounter(data.startTime);
-
         data.participants.forEach(function (p) {
             addSummonerBasic(p);
         });
         data.bannedChampions.forEach(function (p) {
             addBan(p.team, p.champion);
         });
-
-
         $("#logo1").removeClass("logo1");
         $("#teams").show();
-
         $.ajax(realRoot + data.gameId + "/ranks").done(function (pd) {
             console.log(pd);
             pd.participants.forEach(function (p) {
@@ -180,7 +165,9 @@ $(document).ready(function () {
                     if (p.series === undefined) {
                         rank += p.lp + " LP";
                     } else {
-                        rank += p.series;
+                        rank += "Series: " + p.series.replace(/W/g, "<span class='green1'>o</span>")
+                                .replace(/L/g, "<span class='red1'>o</span>")
+                                .replace(/N/g, "<span class='grey2'>o</span>");
                     }
                 } else {
                     rank = "LEVEL " + p.level;
@@ -199,8 +186,6 @@ $(document).ready(function () {
                 }).find(".runes").tooltip();
                 $.ajax(realRoot + data.gameId + "/" + p.summonerId + "/stats").done(function (sd) {
                     console.log(sd);
-
-
                     $("#" + p.summonerId + "_winRate").loadTemplate($("#summonerWinRateTemplate"), {
                         soloRankedWinRate: Math.round(sd.wins / Math.max(sd.wins + sd.losses, 1) * 1000) / 10 + "%",
                         soloRankedWins: sd.wins,
@@ -212,13 +197,11 @@ $(document).ready(function () {
                         championDeaths: sd.ranked.averageDeaths,
                         championAssists: sd.ranked.averageAssists
                     });
-
                     $("#" + p.summonerId + "_champWinRate").loadTemplate($("#summonerChampWinRateTemplate"), {
                         championWinRate: sd.ranked.championWinRatio,
                         championWins: sd.ranked.championWins,
                         championLosses: sd.ranked.championLosses
                     });
-
                 }).fail(function (data) {
                     console.log(data);
                     $("#searchButton").addClass("btn-danger");
