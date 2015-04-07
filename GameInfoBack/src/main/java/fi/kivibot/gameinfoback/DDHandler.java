@@ -6,6 +6,11 @@
 package fi.kivibot.gameinfoback;
 
 import fi.kivibot.gameinfoback.api.ApiHandler;
+import fi.kivibot.gameinfoback.api.Platform;
+import fi.kivibot.gameinfoback.api.exceptions.RateLimitException;
+import fi.kivibot.gameinfoback.api.exceptions.RequestException;
+import fi.kivibot.gameinfoback.api.exceptions.RitoException;
+import fi.kivibot.gameinfoback.api.structures.Realm;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -14,6 +19,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import spark.Spark;
@@ -38,12 +44,12 @@ public class DDHandler {
         Spark.get("/img/:type/:img", (req, res) -> {
             if (allowed.contains(req.params("type"))) {
                 String imgStr = req.params("type") + "/" + req.params("img");
-                System.out.println(imgStr);
                 if (!images.contains(imgStr)) {
+                    System.out.println(imgStr);
                     HttpURLConnection conn = (HttpURLConnection) new URL(ddBase + version + "/img/" + imgStr).openConnection();
                     if (conn.getResponseCode() == 200) {
                         InputStream is = conn.getInputStream();
-                        new File(root.getAbsolutePath() + "/" + version + "/5.7.1/img/" + req.params("type")).mkdirs();
+                        new File(root.getAbsolutePath() + "/" + version + "//img/" + req.params("type")).mkdirs();
                         OutputStream os = new FileOutputStream(root.getAbsolutePath() + "/" + version + "/img/" + imgStr);
                         for (int i = 0; i < conn.getContentLength(); i++) {
                             os.write(is.read());
@@ -53,11 +59,33 @@ public class DDHandler {
                     } else {
                         return null;
                     }
+                    images.add(imgStr);
                 }
                 res.redirect("../../" + version + "/img/" + imgStr);
             }
             return null;
         });
+        new Thread(() -> {
+            while (true) {
+                //check version
+                System.out.println("Checking dd version");
+                try {
+                    Realm r = api.getRealm(Platform.EUNE);
+                    if (!version.equals(r.getDd())) {
+                        version = r.getDd();
+                        images.clear();
+                        System.out.println("New dd version found!");
+                    }
+                } catch (RitoException | RateLimitException | RequestException | IOException ex) {
+                    Logger.getLogger(DDHandler.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                try {
+                    Thread.sleep(TimeUnit.HOURS.toMillis(1));
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(DDHandler.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }).start();
     }
 
 }

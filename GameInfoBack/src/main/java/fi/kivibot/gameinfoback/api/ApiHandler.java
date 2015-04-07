@@ -14,6 +14,7 @@ import fi.kivibot.gameinfoback.api.structures.currentgame.CurrentGame;
 import fi.kivibot.gameinfoback.api.structures.League;
 import fi.kivibot.gameinfoback.api.structures.PlayerStatsSummary;
 import fi.kivibot.gameinfoback.api.structures.RankedStats;
+import fi.kivibot.gameinfoback.api.structures.Realm;
 import fi.kivibot.gameinfoback.api.structures.RunePage;
 import fi.kivibot.gameinfoback.api.structures.RunePages;
 import fi.kivibot.gameinfoback.api.structures.RuneSlot;
@@ -397,8 +398,46 @@ public class ApiHandler {
         return sl;
     }
 
+    public Realm getRealm(Platform p) throws RitoException, RateLimitException, RequestException, IOException {
+        ApiResponse resp = get(formStaticDataUrl(p, "v1.2/realm"));
+
+        //Error handling
+        switch (resp.code) {
+            case 200:
+                break;
+            case 400:
+            case 401:
+                throw new RequestException(resp.code);
+            case 404:
+                return null;
+            case 429:
+                throw new RateLimitException();
+            case 500:
+            case 503:
+            default:
+                throw new RitoException(resp.code);
+        }
+
+        JSONObject jo = (JSONObject) JSONValue.parse(resp.body);
+        Map<String, String> n = (Map<String, String>) jo.get("n");
+
+        return new Realm((String) jo.get("cdn"),
+                (String) jo.get("css"),
+                (String) jo.get("dd"),
+                (String) jo.get("l"),
+                (String) jo.get("lg"),
+                n,
+                (int) (long) (Long) jo.get("profileiconmax"),
+                (String) jo.get("store"),
+                (String) jo.get("v"));
+    }
+
     private String formApiUrl(Platform p, String path) {
         return "https://" + p.getRegion() + ".api.pvp.net/api/lol/" + p.getRegion() + "/" + path + "?api_key=" + apiKey;
+    }
+
+    private String formStaticDataUrl(Platform p, String path) {
+        return "https://" + p.getRegion() + ".api.pvp.net/api/lol/static-data/" + p.getRegion() + "/" + path + "?api_key=" + apiKey;
     }
 
     private String formObserverUrl(Platform p, String path) {
