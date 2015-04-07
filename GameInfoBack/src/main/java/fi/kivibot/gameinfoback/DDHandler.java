@@ -32,7 +32,7 @@ import spark.SparkBase;
 public class DDHandler {
 
     private static String ddBase = "http://ddragon.leagueoflegends.com/cdn/";
-    private static String allowed = "champion|profileicon";
+    private static String allowed = "champion|profileicon|spell";
     private static String version = "5.7.1";
 
     public DDHandler(ApiHandler api) {
