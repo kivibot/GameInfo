@@ -63,7 +63,7 @@ public class DDHandler {
                     images.add(imgStr);
                 }
                 res.header("location", "../../" + version + "/img/" + imgStr);
-                Spark.halt(307);
+                Spark.halt(301);
             }
             return null;
         });
