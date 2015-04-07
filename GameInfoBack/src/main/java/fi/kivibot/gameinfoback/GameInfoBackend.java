@@ -44,7 +44,6 @@ public class GameInfoBackend {
     private final String apiKey;
 
     private ApiHandler api;
-    private ApiCache apiCache;
 
     private Map<Long, String> champMap = new HashMap<>();
     private Map<Long, String> spellMap = new HashMap<>();
@@ -52,6 +51,8 @@ public class GameInfoBackend {
     private Map<Long, String> gqciMap = new HashMap<>();
     private Map<Long, RuneInfo> runeMap = new HashMap<>();
     private Map<String, String> nameMap = new HashMap<>();
+    
+    private Map<Platform, ApiCache> cacheMap = new HashMap<>();
 
     public GameInfoBackend(int port, String apiKey) {
         this.port = port;
@@ -115,7 +116,6 @@ public class GameInfoBackend {
         }
 
         api = new ApiHandler(apiKey);
-        apiCache = new ApiCache(api);
 
         Spark.setPort(port);
         Spark.staticFileLocation("/frontEnd/public_html");
@@ -187,12 +187,12 @@ public class GameInfoBackend {
 
     private String handleCurrentGame(Request req, Response res) throws IOException, RateLimitException, RequestException, RitoException {
         System.out.println("New request");
-        Summoner s = api.getSummonerByName(Platform.EUNE, URLDecoder.decode(req.params("summoner"), "utf-8"));
+        Summoner s = api.getSummonerByName(Platform.getPlatform(req.params("server")), URLDecoder.decode(req.params("summoner"), "utf-8"));
         if (s == null) {
             res.status(404);
             return "The requested summoner was not found.";
         }
-        CurrentGame cg = api.getCurrentGame(Platform.EUNE, s);
+        CurrentGame cg = api.getCurrentGame(Platform.getPlatform(req.params("server")), s);
         if (cg == null) {
             res.status(404);
             return "No active games were found.";
@@ -250,8 +250,8 @@ public class GameInfoBackend {
         jo.put("startTime", cg.getGameStartTime());
 
         res.type("application/json");
-
-        apiCache.submitGame(cg);
+        
+        getApiCache(Platform.getPlatform(req.params("server"))).submitGame(cg);
 
         return jo.toJSONString();
     }
@@ -265,6 +265,7 @@ public class GameInfoBackend {
             res.status(403);
             return "Invalid id.";
         }
+        ApiCache apiCache = getApiCache(Platform.getPlatform(req.params("server")));
         CurrentGame cg = apiCache.getGame(id);
         if (cg == null) {
             res.status(404);
@@ -344,6 +345,7 @@ public class GameInfoBackend {
             res.status(403);
             return "Invalid game id.";
         }
+        ApiCache apiCache = getApiCache(Platform.getPlatform(req.params("server")));
         CurrentGame cg = apiCache.getGame(id);
         if (cg == null) {
             res.status(404);
@@ -419,6 +421,14 @@ public class GameInfoBackend {
         res.type("application/json");
 
         return po.toJSONString();
+    }
+    
+    private ApiCache getApiCache(Platform p){
+        if(!cacheMap.containsKey(p)){
+            ApiCache ac = new ApiCache(api, p);
+            cacheMap.put(p, ac);
+        }
+        return cacheMap.get(p);
     }
 
 }

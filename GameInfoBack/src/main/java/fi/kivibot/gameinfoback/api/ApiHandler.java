@@ -122,6 +122,7 @@ public class ApiHandler {
         return m;
     }
 
+    //Does not work with KR!
     public CurrentGame getCurrentGame(Platform p, Summoner s)
             throws IOException, RateLimitException, RequestException, RitoException {
 
@@ -449,6 +450,7 @@ public class ApiHandler {
     private ApiResponse get(String url) throws MalformedURLException, IOException {
         boolean apiChecker = false;
         System.out.print(".");
+        System.out.println(url);
         for (int i = 0; i < 100; i++) {
 //            while (!apiChecker && !apiOK) {
 //                try {

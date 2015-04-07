@@ -30,6 +30,8 @@ import java.util.logging.Logger;
 /**
  *
  * @author Nicklas
+ * 
+ * Fun platform stuff
  */
 public class ApiCache {
     
@@ -87,9 +89,11 @@ public class ApiCache {
     private final ExecutorService pool = Executors.newFixedThreadPool((int) ConfigManager.getDefault().getLong("poolSize", Runtime.getRuntime().availableProcessors()));
     
     private final ApiHandler api;
+    private final Platform platform;
     
-    public ApiCache(ApiHandler api) {
+    public ApiCache(ApiHandler api, Platform p) {
         this.api = api;
+        this.platform = p;
     }
     
     public void submitGame(CurrentGame cg) {
@@ -111,7 +115,7 @@ public class ApiCache {
             }
             Map<String, Summoner> sm;
             try {
-                sm = api.getSummonersByNames(Platform.EUNE, names);
+                sm = api.getSummonersByNames(platform, names);
             } catch (IOException | RateLimitException | RequestException | RitoException ex) {
                 Logger.getLogger(ApiCache.class.getName()).log(Level.SEVERE, null, ex);
                 return;
@@ -132,7 +136,7 @@ public class ApiCache {
                 pool.submit(() -> {
                     Map<String, List<League>> lm;
                     try {
-                        lm = api.getLeaguesEntry(Platform.EUNE, ids);
+                        lm = api.getLeaguesEntry(platform, ids);
                     } catch (IOException | RateLimitException | RequestException | RitoException ex) {
                         Logger.getLogger(ApiCache.class.getName()).log(Level.SEVERE, null, ex);
                         for (long l : ids) {
@@ -147,7 +151,7 @@ public class ApiCache {
                 pool.submit(() -> {
                     Map<String, RunePages> rm;
                     try {
-                        rm = api.getRunes(Platform.EUNE, ids);
+                        rm = api.getRunes(platform, ids);
                     } catch (IOException | RateLimitException | RequestException | RitoException ex) {
                         Logger.getLogger(ApiCache.class.getName()).log(Level.SEVERE, null, ex);
                         for (long l : ids) {
@@ -163,7 +167,7 @@ public class ApiCache {
                     rankedStatsMap.put(id, pool.submit(() -> {
                         RankedStats rs = null;
                         try {
-                            rs = api.getRankedStats(Platform.EUNE, id);
+                            rs = api.getRankedStats(platform, id);
                         } catch (IOException | RateLimitException | RequestException | RitoException ex) {
                             Logger.getLogger(ApiCache.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -172,7 +176,7 @@ public class ApiCache {
                     playerStatsMap.put(id, pool.submit(() -> {
                         List<PlayerStatsSummary> pss;
                         try {
-                            pss = api.getStatsSummary(Platform.EUNE, id);
+                            pss = api.getStatsSummary(platform, id);
                         } catch (IOException | RequestException | RateLimitException | RitoException ex) {
                             Logger.getLogger(ApiCache.class.getName()).log(Level.SEVERE, null, ex);
                             return null;
