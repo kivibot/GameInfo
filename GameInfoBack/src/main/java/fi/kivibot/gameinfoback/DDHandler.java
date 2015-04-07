@@ -42,6 +42,7 @@ public class DDHandler {
         Spark.staticFileLocation("/frontEnd/public_html");
         HashSet<String> images = new HashSet<>();
         Spark.get("/img/:type/:img", (req, res) -> {
+            System.out.println(req.params("type"));
             if (allowed.contains(req.params("type"))) {
                 String imgStr = req.params("type") + "/" + req.params("img");
                 if (!images.contains(imgStr)) {
@@ -49,7 +50,7 @@ public class DDHandler {
                     HttpURLConnection conn = (HttpURLConnection) new URL(ddBase + version + "/img/" + imgStr).openConnection();
                     if (conn.getResponseCode() == 200) {
                         InputStream is = conn.getInputStream();
-                        new File(root.getAbsolutePath() + "/" + version + "//img/" + req.params("type")).mkdirs();
+                        new File(root.getAbsolutePath() + "/" + version + "/img/" + req.params("type")).mkdirs();
                         OutputStream os = new FileOutputStream(root.getAbsolutePath() + "/" + version + "/img/" + imgStr);
                         for (int i = 0; i < conn.getContentLength(); i++) {
                             os.write(is.read());
@@ -62,7 +63,7 @@ public class DDHandler {
                     images.add(imgStr);
                 }
                 res.header("location", "../../" + version + "/img/" + imgStr);
-                Spark.halt(301);
+                Spark.halt(307);
             }
             return null;
         });
