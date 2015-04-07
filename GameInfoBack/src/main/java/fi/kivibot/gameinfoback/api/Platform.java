@@ -24,6 +24,16 @@ public enum Platform {
     public static Platform getEUW() {
         return EUW;
     }
+    
+    public static boolean isPlatform(String str){
+        switch(str.toLowerCase()){
+            case "eune":
+            case "euw":
+                return true;
+            default:
+                return false;
+        }
+    }
 
     public String getRegion() {
         return region;

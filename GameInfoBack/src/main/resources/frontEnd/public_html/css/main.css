@@ -50,14 +50,14 @@ body{
 }
 
 .rowtop4 {
-    background-color: #F26F97;
+    background-color: #D26FA7;
     font-weight: bold;
     color: #ffffff;
     margin-top: 10px;
 }
 
 .rowtop3 {
-    background-color: #F26F97;
+    background-color: #D26FA7;
     font-weight: bold;
     color: #ffffff;
     margin-bottom: 15px;
@@ -99,12 +99,10 @@ body{
 }
 
 .cr1 {
-    border-bottom: 1px solid #ccc;
     background-color: #efefef;
 }
 
 .cr1:hover {
-    border-bottom: 1px solid #ccc;
     background-color: #e8e8e8;
 }
 
@@ -150,10 +148,17 @@ body{
     margin-top: 0;
 }
 
+#logo1 {    
+    min-width: 160px;
+}
+
 .bigNameContainer{
     padding-left: 3px;
 }
 
+.bans{
+    min-width: 150px;
+}
 
 
 .bans img {

@@ -19,7 +19,7 @@
         <#if autoFind>
         <script>
             $(document).ready(function () {
-                search("${summoner}")
+                search("${server}", "${summoner}")
             });
         </script>
         </#if> 
@@ -106,7 +106,7 @@
                     <div class="col-xs-7 vc">
                         &nbsp;<br>&nbsp;
                     </div>
-                    <div class="col-xs-2 vc">
+                    <div class="col-xs-2 vc middle">
                         Banned champions:
                     </div>
                     <div class="col-xs-2 vc bans" id="t100_bans">
@@ -128,8 +128,8 @@
             <div id="t200">
                 <div class="row rowtop4">
                     <div class="col-xs-2 vc">Name</div>
-                    <div class="col-xs-1 vc">Champion</div>
-                    <div class="col-xs-2 vc middle">Season 5 Rank</div>
+                    <div class="col-xs-1 vc champ">Champion</div>
+                    <div class="col-xs-2 vc middle rank">Season 5 Rank</div>
                     <div class="col-xs-1 vc middle"></div>
                     <div class="col-xs-1 vc middle">Solo ranked win rate</div>
                     <div class="col-xs-1 vc middle">Champion KDA</div>
@@ -143,7 +143,7 @@
                     <div class="col-xs-7 vc">
                         &nbsp;<br>&nbsp;
                     </div>
-                    <div class="col-xs-2 vc">
+                    <div class="col-xs-2 vc middle">
                         Banned champions:
                     </div>
                     <div class="col-xs-2 vc bans" id="t200_bans">
@@ -152,30 +152,45 @@
             </div>
         </div>
         <div class="row">
-            <form action="${realRoot}" method="get">
-                <div class="col-xs-3 input-group searchArea">
-                    <input type="text" name="summoner" class="form-control" id="summonerInput" placeholder="Summoner">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" id="searchButton" type="submit">
+            <form action="${realRoot}" method="get" class="form-inline">
+                <div class="input-group searchArea">
+                    <div class="form-group">
+                        <input type="text" name="summoner" class="form-control" id="summonerInput" placeholder="Summoner">
+                    </div>
+                    <div class="form-group">
+                        <select id="serverSelect" class="form-control" name="server">
+                            <option>EUNE</option>
+                            <option>EUW</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-default form-control" id="searchButton" type="submit">
                             <span class="glyphicon glyphicon-search" aria-hidden="true" id="searchButtonImage"></span>
                             <span id="searchButtonText">Search</span>
                         </button>
-                    </span>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
     <#if analytics??>
     <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                    m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-  ga('create', '${analytics}', 'auto');
-  ga('send', 'pageview');
+        ga('create', '${analytics}', 'auto');
+        ga('send', 'pageview');
 
-</script>
+    </script>
     </#if> 
 </body>
 </html>

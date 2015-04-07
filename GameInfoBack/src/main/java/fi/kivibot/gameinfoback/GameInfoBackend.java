@@ -119,6 +119,7 @@ public class GameInfoBackend {
 
         Spark.setPort(port);
         Spark.staticFileLocation("/frontEnd/public_html");
+        new DDHandler(api);
         Spark.before((req, res) -> {
             if (!"Basic bWF0aWtrYTpxd2VydHk=".equals(req.headers("Authorization"))) {
                 res.header("WWW-Authenticate", "Basic");
@@ -127,8 +128,9 @@ public class GameInfoBackend {
         });
         Spark.get("/", (req, res) -> {
             String summoner = req.queryParams("summoner");
+            String server = req.queryParams("server");
             if (summoner != null) {
-                res.header("location", summoner);
+                res.header("location", server + "/" + summoner);
                 Spark.halt(301);
             }
             Map<String, Object> attributes = new HashMap<>();
@@ -136,38 +138,46 @@ public class GameInfoBackend {
             attributes.put("realRoot", "");
             return new ModelAndView(attributes, "index.html");
         }, new FreeMarkerEngine());
-        Spark.get("/:summoner", (req, res) -> {
-            Map<String, Object> attributes = new HashMap<>();
+        Spark.get("/:server/:summoner", (req, res) -> {
             String summoner = req.queryParams("summoner");
-            if (summoner != null) {
-                res.header("location", summoner);
+            String server = req.queryParams("server");
+            if (summoner != null && server != null) {
+                res.header("location", server + "/" + summoner);
                 Spark.halt(301);
             }
-            summoner = req.params("summoner");
-            if (summoner != null) {
-                attributes.put("autoFind", true);
-                attributes.put("summoner", summoner);
-            } else {
-                attributes.put("autoFind", false);
-            }
-            attributes.put("realRoot", "");
-            return new ModelAndView(attributes, "index.html");
-        }, new FreeMarkerEngine());
-        Spark.get("/:summoner/", (req, res) -> {
             Map<String, Object> attributes = new HashMap<>();
-            String summoner = req.params("summoner");
+            summoner = req.params("summoner");
+            server = req.params("server");
+            if(!Platform.isPlatform(server)){
+                return null;
+            }
             if (summoner != null) {
                 attributes.put("autoFind", true);
                 attributes.put("summoner", summoner);
+                attributes.put("server", server);
             } else {
                 attributes.put("autoFind", false);
             }
             attributes.put("realRoot", "../");
+            return new FreeMarkerEngine().render(new ModelAndView(attributes, "index.html"));
+        });
+        Spark.get("/:server/:summoner/", (req, res) -> {
+            Map<String, Object> attributes = new HashMap<>();
+            String summoner = req.params("summoner");
+            String server = req.params("server");
+            if (summoner != null) {
+                attributes.put("autoFind", true);
+                attributes.put("summoner", summoner);
+                attributes.put("server", server);
+            } else {
+                attributes.put("autoFind", false);
+            }
+            attributes.put("realRoot", "../../");
             return new ModelAndView(attributes, "index.html");
         }, new FreeMarkerEngine());
-        Spark.get(":summoner/current", this::handleCurrentGame);
-        Spark.get(":gameId/ranks", this::handleGameRanks);
-        Spark.get(":gameId/:summonerId/stats", this::handleSummonerStats);
+        Spark.get(":server/:summoner/current", this::handleCurrentGame);
+        Spark.get(":server/:gameId/ranks", this::handleGameRanks);
+        Spark.get(":server/:gameId/:summonerId/stats", this::handleSummonerStats);
         Spark.exception(RitoException.class, (e, req, res) -> {
             res.status(503);
             res.body("Failed to get data from RIOT.");
