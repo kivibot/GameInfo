@@ -1,7 +1,7 @@
-package fi.kivibot.gameinfoback.api;
+package fi.kivibot.gameinfoback.api.old;
 
-import fi.kivibot.gameinfoback.api.structures.LeagueEntry;
-import fi.kivibot.gameinfoback.api.structures.MiniSeries;
+import fi.kivibot.gameinfoback.api.old.structures.LeagueEntry;
+import fi.kivibot.gameinfoback.api.old.structures.MiniSeries;
 
 /**
  *

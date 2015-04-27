@@ -5,11 +5,11 @@
  */
 package fi.kivibot.gameinfoback;
 
-import fi.kivibot.gameinfoback.api.ApiHandler;
-import fi.kivibot.gameinfoback.api.exceptions.RateLimitException;
-import fi.kivibot.gameinfoback.api.exceptions.RequestException;
-import fi.kivibot.gameinfoback.api.exceptions.RitoException;
-import fi.kivibot.gameinfoback.api.structures.Summoner;
+import fi.kivibot.gameinfoback.api.old.ApiHandler;
+import fi.kivibot.gameinfoback.api.old.exceptions.RateLimitException;
+import fi.kivibot.gameinfoback.api.old.exceptions.RequestException;
+import fi.kivibot.gameinfoback.api.old.exceptions.RitoException;
+import fi.kivibot.gameinfoback.api.old.structures.Summoner;
 import java.io.IOException;
 
 /**

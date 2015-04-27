@@ -5,12 +5,12 @@
  */
 package fi.kivibot.gameinfoback;
 
-import fi.kivibot.gameinfoback.api.ApiHandler;
-import fi.kivibot.gameinfoback.api.Platform;
-import fi.kivibot.gameinfoback.api.exceptions.RateLimitException;
-import fi.kivibot.gameinfoback.api.exceptions.RequestException;
-import fi.kivibot.gameinfoback.api.exceptions.RitoException;
-import fi.kivibot.gameinfoback.api.structures.Realm;
+import fi.kivibot.gameinfoback.api.old.ApiHandler;
+import fi.kivibot.gameinfoback.api.old.Platform;
+import fi.kivibot.gameinfoback.api.old.exceptions.RateLimitException;
+import fi.kivibot.gameinfoback.api.old.exceptions.RequestException;
+import fi.kivibot.gameinfoback.api.old.exceptions.RitoException;
+import fi.kivibot.gameinfoback.api.old.structures.Realm;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -122,6 +122,7 @@ public class DDHandler {
                                 ((JSONObject) champs.get("data")).entrySet().forEach((e) -> {
                                     JSONObject champ = (JSONObject) ((Map.Entry) e).getValue();
                                     champMap.put(Long.valueOf((String) champ.get("key")), (String) ((JSONObject) champ.get("image")).get("full"));
+                                    
                                 });
                             }
                         }

@@ -1,4 +1,4 @@
-package fi.kivibot.gameinfoback.api.exceptions;
+package fi.kivibot.gameinfoback.api.old.exceptions;
 
 /**
  *

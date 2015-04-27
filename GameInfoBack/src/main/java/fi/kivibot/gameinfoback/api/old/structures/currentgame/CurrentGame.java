@@ -1,6 +1,6 @@
-package fi.kivibot.gameinfoback.api.structures.currentgame;
+package fi.kivibot.gameinfoback.api.old.structures.currentgame;
 
-import fi.kivibot.gameinfoback.api.structures.BannedChampion;
+import fi.kivibot.gameinfoback.api.old.structures.BannedChampion;
 import java.util.List;
 
 /**

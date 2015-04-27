@@ -1,4 +1,4 @@
-package fi.kivibot.gameinfoback.api;
+package fi.kivibot.gameinfoback.api.old;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;

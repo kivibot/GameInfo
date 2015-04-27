@@ -1,14 +1,14 @@
 package fi.kivibot.gameinfoback;
 
-import fi.kivibot.gameinfoback.api.Platform;
-import fi.kivibot.gameinfoback.api.SoloLeagueEntry;
-import fi.kivibot.gameinfoback.api.structures.ChampionStats;
-import fi.kivibot.gameinfoback.api.structures.LeagueEntry;
-import fi.kivibot.gameinfoback.api.structures.PlayerStatsSummary;
-import fi.kivibot.gameinfoback.api.structures.RankedStats;
-import fi.kivibot.gameinfoback.api.structures.RunePage;
-import fi.kivibot.gameinfoback.api.structures.RunePages;
-import fi.kivibot.gameinfoback.api.structures.Summoner;
+import fi.kivibot.gameinfoback.api.old.Platform;
+import fi.kivibot.gameinfoback.api.old.SoloLeagueEntry;
+import fi.kivibot.gameinfoback.api.old.structures.ChampionStats;
+import fi.kivibot.gameinfoback.api.old.structures.LeagueEntry;
+import fi.kivibot.gameinfoback.api.old.structures.PlayerStatsSummary;
+import fi.kivibot.gameinfoback.api.old.structures.RankedStats;
+import fi.kivibot.gameinfoback.api.old.structures.RunePage;
+import fi.kivibot.gameinfoback.api.old.structures.RunePages;
+import fi.kivibot.gameinfoback.api.old.structures.Summoner;
 import java.util.List;
 
 /**

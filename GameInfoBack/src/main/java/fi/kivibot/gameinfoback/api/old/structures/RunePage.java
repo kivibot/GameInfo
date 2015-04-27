@@ -1,4 +1,4 @@
-package fi.kivibot.gameinfoback.api.structures;
+package fi.kivibot.gameinfoback.api.old.structures;
 
 import java.util.Set;
 
