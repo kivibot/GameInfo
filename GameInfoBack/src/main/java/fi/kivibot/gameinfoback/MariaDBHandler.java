@@ -1,7 +1,7 @@
 package fi.kivibot.gameinfoback;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import fi.kivibot.gameinfoback.api.old.Platform;
+import fi.kivibot.gameinfoback.api.Platform;
 import fi.kivibot.gameinfoback.api.old.SoloLeagueEntry;
 import fi.kivibot.gameinfoback.api.old.structures.ChampionStats;
 import fi.kivibot.gameinfoback.api.old.structures.LeagueEntry;

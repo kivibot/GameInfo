@@ -1,4 +1,4 @@
-package fi.kivibot.gameinfoback.api.old;
+package fi.kivibot.gameinfoback.api;
 
 /**
  *

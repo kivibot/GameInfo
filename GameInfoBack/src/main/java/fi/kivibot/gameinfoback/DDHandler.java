@@ -6,7 +6,7 @@
 package fi.kivibot.gameinfoback;
 
 import fi.kivibot.gameinfoback.api.old.ApiHandler;
-import fi.kivibot.gameinfoback.api.old.Platform;
+import fi.kivibot.gameinfoback.api.Platform;
 import fi.kivibot.gameinfoback.api.old.exceptions.RateLimitException;
 import fi.kivibot.gameinfoback.api.old.exceptions.RequestException;
 import fi.kivibot.gameinfoback.api.old.exceptions.RitoException;

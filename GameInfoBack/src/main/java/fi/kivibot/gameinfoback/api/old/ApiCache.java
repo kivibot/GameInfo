@@ -1,5 +1,6 @@
 package fi.kivibot.gameinfoback.api.old;
 
+import fi.kivibot.gameinfoback.api.Platform;
 import fi.kivibot.gameinfoback.ConfigManager;
 import fi.kivibot.gameinfoback.DatabaseHandler;
 import fi.kivibot.gameinfoback.api.old.exceptions.RateLimitException;
