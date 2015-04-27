@@ -82,6 +82,7 @@ function handleCurrentGame(server, summoner, data) {
     $("#bigIcon").attr("src", imagePath + "/profileicon/" + data.bigIcon);
     $("#bigName").text(data.bigName);
     $("#gameinfo").text(data.infoLine);
+    console.log(data);
     setTimeCounter(data.startTime);
     data.participants.forEach(function (p) {
         addSummoner(p);

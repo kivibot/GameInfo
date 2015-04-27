@@ -33,5 +33,10 @@ public class PlayerStatsSummary {
     public int getWins() {
         return wins;
     }
+
+    @Override
+    public String toString() {
+        return "PlayerStatsSummary{" + "losses=" + losses + ", modifyDate=" + modifyDate + ", playerStatSummaryType=" + playerStatSummaryType + ", wins=" + wins + '}';
+    }
     
 }

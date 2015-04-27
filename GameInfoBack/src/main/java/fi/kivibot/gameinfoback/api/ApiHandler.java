@@ -116,8 +116,8 @@ public class ApiHandler {
                     (long) (Long) data.get("id"),
                     (String) data.get("name"),
                     (int) (long) (Long) data.get("profileIconId"),
-                    (int) (long) (Long) data.get("revisionDate"),
-                    (int) (long) (Long) data.get("summonerLevel")));
+                    (long) (Long) data.get("revisionDate"),
+                    (long) (Long) data.get("summonerLevel")));
         });
         return m;
     }
