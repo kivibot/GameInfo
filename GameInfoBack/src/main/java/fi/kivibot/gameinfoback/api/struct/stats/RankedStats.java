@@ -1,4 +1,4 @@
-package fi.kivibot.gameinfoback.api.old.structures;
+package fi.kivibot.gameinfoback.api.struct.stats;
 
 import java.util.List;
 
@@ -7,32 +7,38 @@ import java.util.List;
  * @author Nicklas
  */
 public class RankedStats {
-
-    private final List<ChampionStats> champions;
-    private final long modifyDate;
-    private final long summonerId;
-
-    public RankedStats(List<ChampionStats> champions, long modifyDate, long summonerId) {
-        this.champions = champions;
-        this.modifyDate = modifyDate;
-        this.summonerId = summonerId;
-    }
+    
+    private List<ChampionStats> champions;
+    private long modifyDate;
+    private long summonerId;
 
     public List<ChampionStats> getChampions() {
         return champions;
+    }
+
+    public void setChampions(List<ChampionStats> champions) {
+        this.champions = champions;
     }
 
     public long getModifyDate() {
         return modifyDate;
     }
 
+    public void setModifyDate(long modifyDate) {
+        this.modifyDate = modifyDate;
+    }
+
     public long getSummonerId() {
         return summonerId;
+    }
+
+    public void setSummonerId(long summonerId) {
+        this.summonerId = summonerId;
     }
 
     @Override
     public String toString() {
         return "RankedStats{" + "champions=" + champions + ", modifyDate=" + modifyDate + ", summonerId=" + summonerId + '}';
     }
-
+    
 }

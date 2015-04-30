@@ -8,11 +8,13 @@ public class RiotAPI {
 
     
     public final CurrentGameAPI currentGame;
+    public final StatsAPI stats;
     public final SummonerAPI summoner;
 
     public RiotAPI(String apiKey, Platform platform) {
         summoner = new SummonerAPI(apiKey, platform);
         currentGame = new CurrentGameAPI(apiKey, platform);
+        stats = new StatsAPI(apiKey, platform);
     }
 
 }

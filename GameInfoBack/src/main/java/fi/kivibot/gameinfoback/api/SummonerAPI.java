@@ -1,5 +1,8 @@
 package fi.kivibot.gameinfoback.api;
 
+import fi.kivibot.gameinfoback.api.exception.RateLimitException;
+import fi.kivibot.gameinfoback.api.exception.RiotSideException;
+import fi.kivibot.gameinfoback.api.exception.RequestException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import fi.kivibot.gameinfoback.HTTPGetter;
