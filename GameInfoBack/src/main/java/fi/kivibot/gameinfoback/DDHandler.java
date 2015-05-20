@@ -5,12 +5,9 @@
  */
 package fi.kivibot.gameinfoback;
 
-import fi.kivibot.gameinfoback.api.old.ApiHandler;
 import fi.kivibot.gameinfoback.api.Platform;
-import fi.kivibot.gameinfoback.api.old.exceptions.RateLimitException;
-import fi.kivibot.gameinfoback.api.old.exceptions.RequestException;
-import fi.kivibot.gameinfoback.api.old.exceptions.RitoException;
-import fi.kivibot.gameinfoback.api.old.structures.Realm;
+import fi.kivibot.gameinfoback.api.exception.RateLimitException;
+import fi.kivibot.gameinfoback.api.exception.RequestException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -141,7 +138,7 @@ public class DDHandler {
                             }
                         }
                     }
-                } catch (RitoException | RateLimitException | RequestException | IOException ex) {
+                } catch () {
                     Logger.getLogger(DDHandler.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 try {

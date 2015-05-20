@@ -4,6 +4,7 @@ package fi.kivibot.gameinfoback;
  *
  * @author Nicklas
  */
+@Deprecated
 public class RuneStat {
 
     private final String name;

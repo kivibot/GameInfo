@@ -20,14 +20,12 @@ import java.util.Map;
 public class CurrentGameAPI {
     
     private final String apiKey;
-    private final Platform platform;
 
-    public CurrentGameAPI(String apiKey, Platform platform) {
+    public CurrentGameAPI(String apiKey) {
         this.apiKey = apiKey;
-        this.platform = platform;
     }
     
-    public CurrentGameInfo getCurrentGameInfo(long id) throws RiotSideException, RateLimitException, RequestException, IOException {
+    public CurrentGameInfo getCurrentGameInfo(Platform platform, long id) throws RiotSideException, RateLimitException, RequestException, IOException {
         StringBuilder url = new StringBuilder();
         url.append("https://").append(platform.getRegion()).append(".api.pvp.net/observer-mode/rest/consumer/getSpectatorGameInfo/").append(platform.getId()).append("/");
         url.append(id);

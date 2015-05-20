@@ -6,15 +6,19 @@ package fi.kivibot.gameinfoback.api;
  */
 public class RiotAPI {
 
-    
     public final CurrentGameAPI currentGame;
+    public final LeagueAPI league;
     public final StatsAPI stats;
     public final SummonerAPI summoner;
 
-    public RiotAPI(String apiKey, Platform platform) {
-        summoner = new SummonerAPI(apiKey, platform);
-        currentGame = new CurrentGameAPI(apiKey, platform);
-        stats = new StatsAPI(apiKey, platform);
+    private final String apiKey;
+
+    public RiotAPI(String apiKey) {
+        this.apiKey = apiKey;
+        summoner = new SummonerAPI(apiKey);
+        currentGame = new CurrentGameAPI(apiKey);
+        stats = new StatsAPI(apiKey);
+        league = new LeagueAPI(apiKey);
     }
 
 }

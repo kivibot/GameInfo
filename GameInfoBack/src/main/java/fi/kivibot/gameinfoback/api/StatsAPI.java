@@ -26,14 +26,12 @@ import java.util.logging.Logger;
 public class StatsAPI {
     
     private final String apiKey;
-    private final Platform platform;
 
-    public StatsAPI(String apiKey, Platform platform) {
+    public StatsAPI(String apiKey) {
         this.apiKey = apiKey;
-        this.platform = platform;
     }
     
-    public RankedStats getRankedStats(long id) throws RiotSideException, RateLimitException, RequestException, IOException {
+    public RankedStats getRankedStats(Platform platform, long id) throws RiotSideException, RateLimitException, RequestException, IOException {
         StringBuilder url = new StringBuilder();
         url.append("https://").append(platform.getRegion()).append(".api.pvp.net/api/lol/").append(platform.getRegion()).append("/v1.3/stats/by-summoner/");
         url.append(id);
@@ -62,7 +60,7 @@ public class StatsAPI {
         }
     }
     
-    public PlayerStatsSummaryList getStatsSummary(long id) throws RiotSideException, RateLimitException, RequestException, IOException {
+    public PlayerStatsSummaryList getStatsSummary(Platform platform, long id) throws RiotSideException, RateLimitException, RequestException, IOException {
         StringBuilder url = new StringBuilder();
         url.append("https://").append(platform.getRegion()).append(".api.pvp.net/api/lol/").append(platform.getRegion()).append("/v1.3/stats/by-summoner/");
         url.append(id);

@@ -1,5 +1,7 @@
 package fi.kivibot.gameinfoback;
 
+import fi.kivibot.gameinfoback.storage.MariaDBManager;
+import fi.kivibot.gameinfoback.storage.DatabaseManager;
 import fi.kivibot.gameinfoback.api.old.ApiCache;
 import fi.kivibot.gameinfoback.api.old.ApiHandler;
 import fi.kivibot.gameinfoback.api.Platform;
@@ -50,7 +52,7 @@ public class GameInfoBackend {
     
     private ApiHandler api;
     private DDHandler ddh;
-    private DatabaseHandler dbh;
+    private DatabaseManager dbm;
 
 //    private Map<Long, String> champMap = new HashMap<>();
 //    private Map<Long, String> spellMap = new HashMap<>();
@@ -126,7 +128,7 @@ public class GameInfoBackend {
         }
         
         try {
-            dbh = new MariaDBHandler();
+            dbm = new MariaDBManager();
         } catch (SQLException ex) {
             Logger.getLogger(GameInfoBackend.class.getName()).log(Level.SEVERE, null, ex);
         } catch (PropertyVetoException ex) {

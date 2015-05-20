@@ -6,6 +6,7 @@ import java.util.List;
  *
  * @author Nicklas
  */
+@Deprecated
 public class RuneInfo {
 
     private final String name;

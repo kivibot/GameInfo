@@ -4,7 +4,7 @@ package fi.kivibot.gameinfoback.api.struct.stats;
  *
  * @author Nicklas
  */
-class PlayerStatsSummary {
+public class PlayerStatsSummary {
     private AggregatedStats aggregatedStats;
     private Integer losses;
     private long modifyDate;

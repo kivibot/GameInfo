@@ -4,6 +4,7 @@ import fi.kivibot.gameinfoback.api.exception.RateLimitException;
 import fi.kivibot.gameinfoback.api.exception.RiotSideException;
 import fi.kivibot.gameinfoback.api.exception.RequestException;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import fi.kivibot.gameinfoback.HTTPGetter;
 import fi.kivibot.gameinfoback.api.struct.summoner.MasteryPages;
@@ -25,15 +26,14 @@ import java.util.logging.Logger;
 public class SummonerAPI {
 
     private final String apiKey;
-    private final Platform platform;
 
-    public SummonerAPI(String apiKey, Platform platform) {
+    public SummonerAPI(String apiKey) {
         this.apiKey = apiKey;
-        this.platform = platform;
     }
 
     /**
      *
+     * @param platform
      * @param names
      * @return
      * @throws RiotSideException
@@ -41,7 +41,7 @@ public class SummonerAPI {
      * @throws RequestException
      * @throws IOException
      */
-    public Map<String, Summoner> getSummonesByNames(List<String> names) throws RiotSideException, RateLimitException, RequestException, IOException {
+    public Map<String, Summoner> getSummonesByNames(Platform platform, List<String> names) throws RiotSideException, RateLimitException, RequestException, IOException {
         if (names.isEmpty()) {
             return new HashMap<>();
         }
@@ -63,7 +63,7 @@ public class SummonerAPI {
         HTTPGetter get = new HTTPGetter(url.toString());
         switch (get.getResponseCode()) {
             case 200: //OK
-                Gson gson = new Gson();
+                Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
                 return gson.fromJson(get.getContent(), new TypeToken<Map<String, Summoner>>() {
                 }.getType());
             case 400:
@@ -84,7 +84,7 @@ public class SummonerAPI {
         }
     }
 
-    public Map<String, Summoner> getSummonersByIds(List<Long> ids) throws RiotSideException, RateLimitException, RequestException, IOException {
+    public Map<String, Summoner> getSummonersByIds(Platform platform, List<Long> ids) throws RiotSideException, RateLimitException, RequestException, IOException {
         if (ids.isEmpty()) {
             return new HashMap<>();
         }
@@ -100,7 +100,7 @@ public class SummonerAPI {
         HTTPGetter get = new HTTPGetter(url.toString());
         switch (get.getResponseCode()) {
             case 200: //OK
-                Gson gson = new Gson();
+                Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
                 return gson.fromJson(get.getContent(), new TypeToken<Map<String, Summoner>>() {
                 }.getType());
             case 400:
@@ -122,7 +122,7 @@ public class SummonerAPI {
     }
 
     //masteries
-    public Map<String, MasteryPages> getMasteriesByIds(List<Long> ids) throws RiotSideException, RateLimitException, RequestException, IOException {
+    public Map<String, MasteryPages> getMasteriesByIds(Platform platform, List<Long> ids) throws RiotSideException, RateLimitException, RequestException, IOException {
         if (ids.isEmpty()) {
             return new HashMap<>();
         }
@@ -169,7 +169,7 @@ public class SummonerAPI {
      * @throws RequestException
      * @throws IOException 
      */
-    public Map<String, String> getNamesByIds(List<Long> ids) throws RiotSideException, RateLimitException, RequestException, IOException {
+    public Map<String, String> getNamesByIds(Platform platform, List<Long> ids) throws RiotSideException, RateLimitException, RequestException, IOException {
         if (ids.isEmpty()) {
             return new HashMap<>();
         }
@@ -207,7 +207,7 @@ public class SummonerAPI {
     }    
     
     //runes
-    public Map<String, RunePages> getRunesByIds(List<Long> ids) throws RiotSideException, RateLimitException, RequestException, IOException {
+    public Map<String, RunePages> getRunesByIds(Platform platform, List<Long> ids) throws RiotSideException, RateLimitException, RequestException, IOException {
         if (ids.isEmpty()) {
             return new HashMap<>();
         }
