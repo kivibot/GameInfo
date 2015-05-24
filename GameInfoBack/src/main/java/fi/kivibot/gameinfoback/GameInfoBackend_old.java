@@ -45,7 +45,7 @@ import spark.template.freemarker.FreeMarkerEngine;
  *
  * @author Nicklas
  */
-public class GameInfoBackend {
+public class GameInfoBackend_old {
     
     private final int port;
     private final String apiKey;
@@ -63,7 +63,7 @@ public class GameInfoBackend {
     
     private Map<Platform, ApiCache> cacheMap = new HashMap<>();
     
-    public GameInfoBackend(int port, String apiKey) {
+    public GameInfoBackend_old(int port, String apiKey) {
         this.port = port;
         this.apiKey = apiKey;
     }
@@ -130,9 +130,9 @@ public class GameInfoBackend {
         try {
             dbm = new MariaDBManager();
         } catch (SQLException ex) {
-            Logger.getLogger(GameInfoBackend.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GameInfoBackend_old.class.getName()).log(Level.SEVERE, null, ex);
         } catch (PropertyVetoException ex) {
-            Logger.getLogger(GameInfoBackend.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GameInfoBackend_old.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         api = new ApiHandler(apiKey);

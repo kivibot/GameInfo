@@ -15,6 +15,7 @@ public class HTTPGetter {
     private final HttpURLConnection conn;
 
     public HTTPGetter(String url) throws IOException {
+        System.out.println(url);
         conn = (HttpURLConnection) new URL(url).openConnection();
         conn.setRequestMethod("GET");
         conn.setUseCaches(false);

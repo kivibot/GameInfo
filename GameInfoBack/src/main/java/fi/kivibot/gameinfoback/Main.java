@@ -5,6 +5,7 @@
  */
 package fi.kivibot.gameinfoback;
 
+import fi.kivibot.gameinfoback.storage.Cache;
 import fi.kivibot.gameinfoback.storage.MariaDBManager;
 import fi.kivibot.gameinfoback.storage.DatabaseException;
 import fi.kivibot.gameinfoback.storage.DatabaseManager;
@@ -53,26 +54,31 @@ public class Main {
 //        System.out.println(api.stats.getRankedStats(23845314));
 //        System.out.println(api.stats.getStatsSummary(23845314));
         
-        String testSummoner = api.summoner.getStandardizedName("Liquid Piglet");
+        String testSummoner = api.summoner.getStandardizedName("Stagor");
+        Platform plat = Platform.EUW;
+        
         List<String> testNames = new ArrayList<>();
         testNames.add(testSummoner);
-        Map<String, Summoner> sm = api.summoner.getSummonesByNames(Platform.NA, testNames);
-        Summoner s = sm.get(testSummoner);
+//        Map<String, Summoner> sm = api.summoner.getSummonesByNames(plat, testNames);
+//        Summoner s = sm.get(testSummoner);
         
         DatabaseManager dbm = new MariaDBManager();
         Cache c = new Cache();
         DataManager dm = new DataManager(c, dbm);
-        CurrentGameInfo cgi = api.currentGame.getCurrentGameInfo(Platform.NA, s.getId());
-
+//        CurrentGameInfo cgi = api.currentGame.getCurrentGameInfo(plat, s.getId());
+//        System.out.println(cgi.getGameId());
+//
+//        
+        Updater u = new Updater(dm, api, RateLimitPolicy.BREAK);
+//        
+//        List<Long> ids = new ArrayList<>();
+//        for(CurrentGameParticipant p : cgi.getParticipants()){
+//            ids.add(p.getSummonerId());
+//        }
+//        
+//        u.updateSummoners(plat, ids);
         
-        Updater u = new Updater(dm, api, RateLimitPolicy.IGNORE);
-        
-        List<Long> ids = new ArrayList<>();
-        for(CurrentGameParticipant p : cgi.getParticipants()){
-            ids.add(p.getSummonerId());
-        }
-        
-        u.updateSummoners(Platform.NA, ids);
+        new Tester().run(api, dm, u);
 
     }
 }

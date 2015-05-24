@@ -5,5 +5,5 @@ package fi.kivibot.gameinfoback;
  * @author Nicklas
  */
 public enum RateLimitPolicy {
-    THROW, IGNORE    
+    THROW, BREAK, LOOP,     
 }

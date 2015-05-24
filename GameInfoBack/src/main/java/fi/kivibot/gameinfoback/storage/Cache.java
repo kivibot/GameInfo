@@ -1,4 +1,4 @@
-package fi.kivibot.gameinfoback;
+package fi.kivibot.gameinfoback.storage;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -20,7 +20,7 @@ public class Cache {
     private final long maxSize;
 
     public Cache() {
-        this(5);
+        this(10);
     }
     
     public Cache(long size) {

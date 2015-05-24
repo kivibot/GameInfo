@@ -41,7 +41,7 @@ public class SummonerAPI {
      * @throws RequestException
      * @throws IOException
      */
-    public Map<String, Summoner> getSummonesByNames(Platform platform, List<String> names) throws RiotSideException, RateLimitException, RequestException, IOException {
+    public Map<String, Summoner> getSummonersByNames(Platform platform, List<String> names) throws RiotSideException, RateLimitException, RequestException, IOException {
         if (names.isEmpty()) {
             return new HashMap<>();
         }

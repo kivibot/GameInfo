@@ -207,6 +207,9 @@ form {
     padding-top: 15px;
     min-width: 940px;
     min-width: 0px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #D2D2D2;
 }
 
 .bronze {

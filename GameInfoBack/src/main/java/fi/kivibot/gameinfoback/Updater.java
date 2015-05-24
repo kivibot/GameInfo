@@ -29,7 +29,8 @@ import java.util.logging.Logger;
  */
 public class Updater {
 
-    private static final long update_threshold = 5 * 60 * 1000;
+    private static final long update_threshold = 60 * 1000;
+    private static final long update_threshold2 = 5 * 60 * 1000;
 
     private final DataManager dataManager;
     private final RiotAPI api;
@@ -40,168 +41,91 @@ public class Updater {
         this.api = api;
         this.rlp = rlp;
     }
-
-//    @Deprecated
-//    public void update(CurrentGameInfo cgi) throws RiotSideException, RequestException, IOException {
-//        String cgiKey = "cgi-" + cgi.getGameId();
-//        if (cache.get(cgiKey) != null) {
-//            return;
-//        }
-//        ReentrantLock lock = getLock(cgiKey, true);
-//        System.out.println("asdf");
-//        lock.lock();
-//        try {
-//            System.err.println("got lock");
-//            if (cache.get(cgiKey) != null) {
-//                return;
-//            }
-//            List<Summoner> summoners = new ArrayList<>();
-//            List<Long> updateList = new ArrayList<>();
-//            List<Long> participants = new ArrayList<>();
-//            for (CurrentGameParticipant p : cgi.getParticipants()) {
-//                if (!p.isBot()) {
-//                    participants.add(p.getSummonerId());
-//                }
-//            }
-//            Map<String, Summoner> participantsMap;
-//            while (true) {
-//                try {
-//                    participantsMap = api.summoner.getSummonersByIds(participants);
-//                    break;
-//                } catch (RateLimitException e) {
-//                    if (rp.equals(RateLimitPolicy.THROW)) {
-//                        throw e;
-//                    }
-//                    try {
-//                        Thread.sleep(1000);
-//                    } catch (InterruptedException ex) {
-//                        Logger.getLogger(Updater.class.getName()).log(Level.SEVERE, null, ex);
-//                    }
-//                }
-//            }
-//            for (CurrentGameParticipant p : cgi.getParticipants()) {
-//                String pidstr = "" + p.getSummonerId();
-//                Summoner s = participantsMap.get(pidstr);
-//                if (s != null) {
-//                    Summoner cs = (Summoner) cache.get("s-" + p.getSummonerId());
-//                    if (!(cs != null && cs.getRevisionDate() == s.getRevisionDate())) {
-//                        updateList.add(p.getSummonerId());
-//                    }
-//                }
-//            }
-//            Map<String, List<League>> leaguesMap;
-//            while (true) {
-//                try {
-//                    leaguesMap = api.league.getLeagueEntriesByIds(updateList);
-//                    break;
-//                } catch (RateLimitException e) {
-//                    if (rp.equals(RateLimitPolicy.THROW)) {
-//                        throw e;
-//                    }
-//                    try {
-//                        Thread.sleep(1000);
-//                    } catch (InterruptedException ex) {
-//                        Logger.getLogger(Updater.class.getName()).log(Level.SEVERE, null, ex);
-//                    }
-//                }
-//            }
-//            List<RankedStats> rankedStatsList = new ArrayList<>();
-//            for (Long l : updateList) {
-//                while (true) {
-//                    try {
-//                        RankedStats rs = api.stats.getRankedStats(l);
-//                        if (rs != null) {
-//                            rankedStatsList.add(rs);
-//                        }
-//                        break;
-//                    } catch (RateLimitException e) {
-//                        if (rp.equals(RateLimitPolicy.THROW)) {
-//                            throw e;
-//                        }
-//                        try {
-//                            Thread.sleep(1000);
-//                        } catch (InterruptedException ex) {
-//                            Logger.getLogger(Updater.class.getName()).log(Level.SEVERE, null, ex);
-//                        }
-//                    }
-//                }
-//            }
-//
-//            //UPDATE CACHE AND DB
-//            cache.put(cgiKey, cgi);
-//            for (Summoner s : participantsMap.values()) {
-//                cache.put("s-" + s.getId(), s);
-//            }
-//            List<League> leagues = new ArrayList<>();
-//            for (Map.Entry<String, List<League>> e : leaguesMap.entrySet()) {
-//                leagues.addAll(e.getValue());
-//                for (League l : e.getValue()) {
-//                    if (l.getQueue().equals("RANKED_SOLO_5x5")) {
-//                        cache.put("le-rs5-" + e.getKey(), l);
-//                    }
-//                }
-//            }
-//
-//            for (RankedStats rs : rankedStatsList) {
-//                cache.put("rs-" + rs.getSummonerId(), rs);
-//            }
-//
-//            try (DatabaseHandler dbh = dbm.getHandler()) {
-//                dbh.updateSummoners(api.getPlatform(), participantsMap.values());
-//                dbh.updateLeagues(api.getPlatform(), leagues);
-//                dbh.executeBatchAndCommit();
-//            } catch (Exception ex) {
-//                Logger.getLogger(Updater.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//
-//        } catch (RiotSideException | RequestException | IOException ex) {
-//            throw ex;
-//        } finally {
-//            returnLock(cgiKey);
-//        }
-//
-//    }
-    public void updateSummoners(Platform p, List<Long> ids) throws RiotSideException, RequestException, RateLimitException, IOException, DatabaseException {
+    
+    public UpdateResult updateSummoners(Platform p, List<Long> ids) throws RiotSideException, RequestException, RateLimitException, IOException, DatabaseException {
         if (ids.isEmpty()) {
-            return;
+            return new UpdateResult(new ArrayList<>(), new ArrayList<>(), false, false);
         }
         Map<Long, Summoner> cachedSums = dataManager.getSummoners(p, ids);
-        List<Long> updateIds = new ArrayList<>();
+        
+        List<Long> idsToUpdate = new ArrayList<>(ids.size());
+        
+        for (long id : ids) {
+            if(cachedSums.containsKey(id)){
+               Summoner cachedSum = cachedSums.get(id);
+               if(cachedSum.getLastUpdated() < System.currentTimeMillis() - update_threshold){
+                   idsToUpdate.add(id);
+               }
+            }
+        }
+        
+    }
+    
+    @Deprecated
+    public UpdateResult updateSummoners_(Platform p, List<Long> ids) throws RiotSideException, RequestException, RateLimitException, IOException, DatabaseException {
+        if (ids.isEmpty()) {
+            return new UpdateResult(new ArrayList<>(), new ArrayList<>(), false, false);
+        }
+        Map<Long, Summoner> cachedSums = dataManager.getSummoners(p, ids);
+        List<Long> updatedIds = new ArrayList<>();
+        List<Long> updatedLeguesIds = new ArrayList<>();
+        List<Long> updatedRankedStatsIds = new ArrayList<>();
+        boolean riotSideProblem = false;
+        boolean rateLimited = false;
         for (long id : ids) {
             if (cachedSums.containsKey(id)) {
                 if (cachedSums.get(id).getLastUpdated() < System.currentTimeMillis() - update_threshold) {
-                    System.out.println(cachedSums.get(id).getLastUpdated() +" < "+ (System.currentTimeMillis() - update_threshold));
-                    updateIds.add(id);
+                    System.out.println(cachedSums.get(id).getLastUpdated() + " < " + (System.currentTimeMillis() - update_threshold));
+                    updatedIds.add(id);
+                    if (cachedSums.get(id).getRsu() < System.currentTimeMillis() - update_threshold2) {
+                        System.out.println(cachedSums.get(id).getRsu() + " < " + (System.currentTimeMillis() - update_threshold));
+                        updatedRankedStatsIds.add(id);
+                    }
+                    if (cachedSums.get(id).getLeu() < System.currentTimeMillis() - update_threshold2) {
+                        System.out.println(cachedSums.get(id).getLeu() + " < " + (System.currentTimeMillis() - update_threshold));
+                        updatedLeguesIds.add(id);
+                    }
                 }
             } else {
                 System.out.println("!");
-                updateIds.add(id);
+                updatedIds.add(id);
+                updatedLeguesIds.add(id);
+                updatedRankedStatsIds.add(id);
             }
         }
         Map<String, Summoner> sums;
         while (true) {
             try {
-                sums = api.summoner.getSummonersByIds(p, updateIds);
+                sums = api.summoner.getSummonersByIds(p, updatedIds);
                 break;
             } catch (RateLimitException e) {
                 if (rlp.equals(RateLimitPolicy.THROW)) {
                     throw e;
+                } else if (rlp.equals(RateLimitPolicy.BREAK)) {
+                    sums = new HashMap<>(0);
+                    rateLimited = true;
+                    System.out.println(":|");
+                    break;
                 }
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(Updater.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            } catch (RiotSideException e) {
+                sums = new HashMap<>(0);
+                riotSideProblem = true;
+                System.out.println(":(");
+                break;
             }
         }
-        updateIds.clear();
         for (Summoner s : sums.values()) {
+            s.setLastUpdated(System.currentTimeMillis());
             if (cachedSums.containsKey(s.getId())) {
                 if (cachedSums.get(s.getId()).getRevisionDate() != s.getRevisionDate()) {
-                    updateIds.add(s.getId());
+                    updatedLeguesIds.remove(s.getId());
+                    updatedRankedStatsIds.remove(s.getId());
                 }
-            } else {
-                updateIds.add(s.getId());
             }
         }
 
@@ -209,37 +133,83 @@ public class Updater {
 
         while (true) {
             try {
-                leaguesMap = api.league.getLeagueEntriesByIds(p, ids);
+                leaguesMap = api.league.getLeagueEntriesByIds(p, updatedLeguesIds);
+                for (Summoner s : sums.values()) {
+                    s.setLeu(System.currentTimeMillis());
+                }
                 break;
             } catch (RateLimitException e) {
                 if (rlp.equals(RateLimitPolicy.THROW)) {
                     throw e;
+                } else if (rlp.equals(RateLimitPolicy.BREAK)) {
+                    leaguesMap = new HashMap<>(0);
+                    rateLimited = true;
+                    System.out.println(":|");
+                    for (Summoner s : sums.values()) {
+                        if (cachedSums.containsKey(s.getId())) {
+                            s.setLeu(cachedSums.get(s.getId()).getLeu());
+                        } else {
+                            s.setLeu(1000);
+                        }
+                    }
+                    break;
                 }
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(Updater.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            } catch (RiotSideException e) {
+                leaguesMap = new HashMap<>(0);
+                riotSideProblem = true;
+                System.out.println(":(");
+                for (Summoner s : sums.values()) {
+                    if (cachedSums.containsKey(s.getId())) {
+                        s.setLeu(cachedSums.get(s.getId()).getLeu());
+                    } else {
+                        s.setLeu(1000);
+                    }
+                }
+                break;
             }
         }
 
         List<RankedStats> rankedStatsList = new ArrayList<>();
 
-        for (long id : updateIds) {
-            RankedStats rs;
+        for (long id : updatedRankedStatsIds) {
+            RankedStats rs = null;
             while (true) {
                 try {
                     rs = api.stats.getRankedStats(p, id);
+                    sums.get("" + id).setRsu(System.currentTimeMillis());
                     break;
                 } catch (RateLimitException e) {
                     if (rlp.equals(RateLimitPolicy.THROW)) {
                         throw e;
+                    } else if (rlp.equals(RateLimitPolicy.BREAK)) {
+                        rateLimited = true;
+                        System.out.println(":|");
+                        if (cachedSums.containsKey(id)) {
+                            sums.get("" + id).setRsu(cachedSums.get(id).getRsu());
+                        } else {
+                            sums.get("" + id).setRsu(1000);
+                        }
+                        break;
                     }
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(Updater.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                } catch (RiotSideException e) {
+                    riotSideProblem = true;
+                    System.out.println(":(");
+                    if (cachedSums.containsKey(id)) {
+                        sums.get("" + id).setRsu(cachedSums.get(id).getRsu());
+                    } else {
+                        sums.get("" + id).setRsu(1000);
+                    }
+                    break;
                 }
             }
             if (rs != null) {
@@ -249,6 +219,7 @@ public class Updater {
 
         dataManager.put(p, sums.values(), leaguesMap, rankedStatsList);
 
+        return new UpdateResult(updatedIds, rankedStatsList, riotSideProblem, rateLimited);
     }
 
 }

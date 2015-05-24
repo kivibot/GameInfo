@@ -20,11 +20,9 @@ public class Summoner {
     private long summonerLevel;
 
     private long lastUpdated;
-
-    public Summoner() {
-        lastUpdated = System.currentTimeMillis();
-    }
-
+    private long rsu;
+    private long leu;
+ 
     public long getId() {
         return id;
     }
@@ -73,8 +71,29 @@ public class Summoner {
         this.lastUpdated = lastUpdated;
     }
 
+    public long getRsu() {
+        System.out.println("rsu: "+rsu);
+        return rsu;
+    }
+
+    public void setRsu(long rsu) {
+        System.out.println("set rsu " +rsu);
+        this.rsu = rsu;
+    }
+
+    public long getLeu() {
+        System.out.println("leu: "+leu);
+        return leu;
+    }
+
+    public void setLeu(long leu) {
+        System.out.println("set leu "+leu);
+        this.leu = leu;
+    }
+
     @Override
     public String toString() {
-        return "Summoner{" + "id=" + id + ", name=" + name + ", profileIconId=" + profileIconId + ", revisionDate=" + revisionDate + ", summonerLevel=" + summonerLevel + ", lastUpdated=" + lastUpdated + '}';
+        return "Summoner{" + "id=" + id + ", name=" + name + ", profileIconId=" + profileIconId + ", revisionDate=" + revisionDate + ", summonerLevel=" + summonerLevel + ", lastUpdated=" + lastUpdated + ", rsu=" + rsu + ", leu=" + leu + '}';
     }
+
 }
