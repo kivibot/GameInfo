@@ -69,7 +69,7 @@ public class Main {
 //        System.out.println(cgi.getGameId());
 //
 //        
-        Updater u = new Updater(dm, api, RateLimitPolicy.BREAK);
+        Updater u = new Updater(dm, api, RateLimitPolicy.LOOP);
 //        
 //        List<Long> ids = new ArrayList<>();
 //        for(CurrentGameParticipant p : cgi.getParticipants()){

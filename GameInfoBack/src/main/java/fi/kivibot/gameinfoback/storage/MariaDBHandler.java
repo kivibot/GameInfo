@@ -61,11 +61,11 @@ public class MariaDBHandler implements DatabaseHandler {
                 }
                 ps.setString(3, s.getName());
                 ps.setInt(4, s.getProfileIconId());
-                ps.setTimestamp(5, new Timestamp(s.getRevisionDate()));
+                ps.setLong(5, s.getRevisionDate());
                 ps.setInt(6, (int) s.getSummonerLevel());
-                ps.setTimestamp(7, new Timestamp(s.getLastUpdated()));
-                ps.setTimestamp(8, new Timestamp(s.getRsu()));
-                ps.setTimestamp(9, new Timestamp(s.getLeu()));
+                ps.setLong(7, s.getLastUpdated());
+                ps.setLong(8, s.getRsu());
+                ps.setLong(9, s.getLeu());
                 ps.addBatch();
             }
             ps.executeBatch();
@@ -101,11 +101,11 @@ public class MariaDBHandler implements DatabaseHandler {
                 s.setId(rs.getInt(1));
                 s.setName(rs.getString(2));
                 s.setProfileIconId(rs.getInt(3));
-                s.setRevisionDate(rs.getTimestamp(4).getTime());
+                s.setRevisionDate(rs.getLong(4));
                 s.setSummonerLevel(rs.getInt(5));
-                s.setLastUpdated(rs.getTimestamp(6).getTime());
-                s.setRsu(rs.getTimestamp(7).getTime());
-                s.setLeu(rs.getTimestamp(8).getTime());
+                s.setLastUpdated(rs.getLong(6));
+                s.setRsu(rs.getLong(7));
+                s.setLeu(rs.getLong(8));
                 map.put(s.getId(), s);
             }
         } catch (SQLException ex) {
