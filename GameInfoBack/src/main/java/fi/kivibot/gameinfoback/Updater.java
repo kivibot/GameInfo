@@ -52,8 +52,8 @@ public class Updater {
 
     }
 
-    private static final long update_threshold = 60 * 1000;
-    private static final long update_threshold2 = 5 * 60 * 1000;
+    private static final long update_threshold = 20 * 60 * 1000;
+    private static final long update_threshold2 = 60 * 60 * 1000;
 
     private final DataManager dataManager;
     private final RiotAPI api;

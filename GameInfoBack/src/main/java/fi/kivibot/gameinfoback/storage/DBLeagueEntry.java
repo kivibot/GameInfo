@@ -114,5 +114,10 @@ public class DBLeagueEntry {
     public void setLosses(int losses) {
         this.losses = losses;
     }
+
+    @Override
+    public String toString() {
+        return "DBLeagueEntry{" + "queue=" + queue + ", playerOrTeamId=" + playerOrTeamId + ", playerOrTeamName=" + playerOrTeamName + ", tier=" + tier + ", division=" + division + ", freshBlood=" + freshBlood + ", hotStreak=" + hotStreak + ", inactive=" + inactive + ", veteran=" + veteran + ", leaguePoints=" + leaguePoints + ", wins=" + wins + ", losses=" + losses + '}';
+    }
     
 }

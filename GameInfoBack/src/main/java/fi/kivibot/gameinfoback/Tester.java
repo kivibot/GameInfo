@@ -7,8 +7,11 @@ import fi.kivibot.gameinfoback.api.RiotAPI;
 import fi.kivibot.gameinfoback.api.struct.currentgame.BannedChampion;
 import fi.kivibot.gameinfoback.api.struct.currentgame.CurrentGameInfo;
 import fi.kivibot.gameinfoback.api.struct.currentgame.CurrentGameParticipant;
+import fi.kivibot.gameinfoback.api.struct.stats.AggregatedStats;
+import fi.kivibot.gameinfoback.api.struct.stats.ChampionStats;
 import fi.kivibot.gameinfoback.api.struct.stats.RankedStats;
 import fi.kivibot.gameinfoback.api.struct.summoner.Summoner;
+import fi.kivibot.gameinfoback.storage.DBLeagueEntry;
 import fi.kivibot.gameinfoback.storage.DataManager;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -22,8 +25,8 @@ import spark.Spark;
  * @author Nicklas
  */
 public class Tester {
-
-    public void run(RiotAPI api, DataManager dm, Updater u) {        
+    
+    public void run(RiotAPI api, DataManager dm, Updater u) {
         Spark.staticFileLocation(
                 "/frontEnd/public_html");
         
@@ -51,27 +54,30 @@ public class Tester {
             }
             UpdateResult ur = u.updateSummoners(p, ids);
 
-            ids.removeAll(ur.getUpdated());
-
+            //ids.removeAll(ur.getUpdated());
             Map<Long, RankedStats> rsm = dm.getRankedStats(p, ids);
             for (RankedStats rs : ur.getRankedStats()) {
                 rsm.put(rs.getSummonerId(), rs);
             }
-
+            Map<Long, List<DBLeagueEntry>> lem = dm.getLeagueEntries(p, ids);
+            
             List<Long> teams = new ArrayList<>(2);
-
+            
             GameInfoOutput gio = new GameInfoOutput();
             
-            if(ur.isRiotFailure()){
+            if (ur.isRiotFailure()) {
                 gio.setRiotProblem(true);
             }
-            if(ur.isRateLimited()){
+            if (ur.isRateLimited()) {
                 gio.setHeavyLoad(true);
             }
             
             gio.setBigName(main.getName());
             gio.setInfoLine("Mui.");
             List<List<Participant>> pls = new ArrayList<>();
+            
+            Map<Long, Summoner> sm2 = dm.getSummoners(p, ids);
+            
             for (CurrentGameParticipant cgp : cgi.getParticipants()) {
                 Participant pa = new Participant();
                 if (cgp.getSummonerId() == main.getId()) {
@@ -87,9 +93,42 @@ public class Tester {
                 pa.setChampionImage("Irelia.png");
                 pa.setSpell1Image("SummonerFlash.png");
                 pa.setSpell2Image("SummonerTeleport.png");
-                pa.setRank("Challenger I");
-                pa.setLP(1337);
-                pa.setRankedStats(new RankeStatsOutput());
+                boolean rankFound = false;
+                if (lem.containsKey(cgp.getSummonerId())) {
+                    for (DBLeagueEntry le : lem.get(cgp.getSummonerId())) {
+                        if (le.getQueue().equals("RANKED_SOLO_5x5")) {
+                            rankFound = true;
+                            pa.setRank(le.getTier() + " " + le.getDivision());
+                            pa.setLP(le.getLeaguePoints());
+                            System.out.println(le);
+                            break;
+                        }
+                    }
+                }
+                if (!rankFound) {
+                    if (sm2.containsKey(cgp.getSummonerId())) {
+                        pa.setRank("Level " + sm2.get(cgp.getSummonerId()).getSummonerLevel());
+                    } else {
+                        pa.setRank("Unraked");
+                    }
+                }
+                if (rsm.containsKey(cgp.getSummonerId())) {
+                    RankeStatsOutput rso = new RankeStatsOutput();
+                    RankedStats rs = rsm.get(cgp.getSummonerId());
+                    for (ChampionStats cs : rs.getChampions()) {
+                        if (cs.getId() == cgp.getChampionId()) {
+                            AggregatedStats as = cs.getStats();
+                            rso.setAssists(as.getTotalAssists());
+                            rso.setDeaths(as.getTotalDeathsPerSession());
+                            rso.setGames(as.getTotalSessionsPlayed());
+                            rso.setKills(as.getTotalChampionKills());
+                            rso.setLosses(as.getTotalSessionsLost());
+                            rso.setWins(as.getTotalSessionsWon());
+                            break;
+                        }
+                    }
+                    pa.setRankedStats(rso);
+                }
                 pls.get(teamIndex).add(pa);
             }
             gio.setParticipants(pls);
@@ -105,9 +144,9 @@ public class Tester {
                 }
                 gio.setBans(bcl);
             }
-
+            
             return "<pre>" + gson.toJson(gio) + "</pre>";
         });
     }
-
+    
 }

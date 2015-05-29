@@ -72,22 +72,18 @@ public class Summoner {
     }
 
     public long getRsu() {
-        System.out.println("rsu: "+rsu);
         return rsu;
     }
 
     public void setRsu(long rsu) {
-        System.out.println("set rsu " +rsu);
         this.rsu = rsu;
     }
 
     public long getLeu() {
-        System.out.println("leu: "+leu);
         return leu;
     }
 
     public void setLeu(long leu) {
-        System.out.println("set leu "+leu);
         this.leu = leu;
     }
 

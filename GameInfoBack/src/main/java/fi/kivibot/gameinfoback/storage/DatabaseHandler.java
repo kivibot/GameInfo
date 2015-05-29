@@ -20,7 +20,7 @@ public interface DatabaseHandler extends AutoCloseable {
 
     public Map<Long, Summoner> getSummoners(Platform p, Collection<Long> ids) throws DatabaseException;
 
-    public void updateLeagues(Platform p, Collection<League> leagues) throws DatabaseException;
+    public void updateLeagues(Platform p, Map<String, List<League>> leagues) throws DatabaseException;
 
     public void updateRankedStats(Platform p, Collection<RankedStats> rankedStats) throws DatabaseException;
     

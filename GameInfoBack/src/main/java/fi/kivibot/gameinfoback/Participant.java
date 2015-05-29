@@ -76,7 +76,7 @@ public class Participant {
         return lp;
     }
 
-    public void setLP(int lP) {
+    public void setLP(int lp) {
         this.lp = lp;
     }
 

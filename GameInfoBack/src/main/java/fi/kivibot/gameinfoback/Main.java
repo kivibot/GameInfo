@@ -5,7 +5,6 @@
  */
 package fi.kivibot.gameinfoback;
 
-import fi.kivibot.gameinfoback.storage.Cache;
 import fi.kivibot.gameinfoback.storage.MariaDBManager;
 import fi.kivibot.gameinfoback.storage.DatabaseException;
 import fi.kivibot.gameinfoback.storage.DatabaseManager;
@@ -18,6 +17,7 @@ import fi.kivibot.gameinfoback.api.exception.RiotSideException;
 import fi.kivibot.gameinfoback.api.struct.currentgame.CurrentGameInfo;
 import fi.kivibot.gameinfoback.api.struct.currentgame.CurrentGameParticipant;
 import fi.kivibot.gameinfoback.api.struct.summoner.Summoner;
+import fi.kivibot.gameinfoback.storage.DatabaseHandler;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -53,18 +53,17 @@ public class Main {
 //        System.out.println(api.currentGame.getCurrentGameInfo(23845314));
 //        System.out.println(api.stats.getRankedStats(23845314));
 //        System.out.println(api.stats.getStatsSummary(23845314));
-        
+
         String testSummoner = api.summoner.getStandardizedName("Stagor");
         Platform plat = Platform.EUW;
-        
+
         List<String> testNames = new ArrayList<>();
         testNames.add(testSummoner);
 //        Map<String, Summoner> sm = api.summoner.getSummonesByNames(plat, testNames);
 //        Summoner s = sm.get(testSummoner);
-        
+
         DatabaseManager dbm = new MariaDBManager();
-        Cache c = new Cache();
-        DataManager dm = new DataManager(c, dbm);
+        DataManager dm = new DataManager(dbm);
 //        CurrentGameInfo cgi = api.currentGame.getCurrentGameInfo(plat, s.getId());
 //        System.out.println(cgi.getGameId());
 //
@@ -77,8 +76,54 @@ public class Main {
 //        }
 //        
 //        u.updateSummoners(plat, ids);
-        
-        new Tester().run(api, dm, u);
 
+        //new Tester().run(api, dm, u);
+        List<Long> ids = new ArrayList<>();
+        ids.add(31366315l);
+        ids.add(31364347l);
+        ids.add(31754676l);
+        ids.add(36613729l);
+        ids.add(41784113l);
+        ids.add(20164259l);
+        ids.add(52757703l);
+        ids.add(22574420l);
+
+        for (int i = 0; i < 20; i++) {
+            new Thread(() -> {
+                try {
+                    test1(ids, dbm);
+                } catch (DatabaseException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }).start();
+            new Thread(() -> {
+                try {
+                    test2(ids, dbm);
+                } catch (DatabaseException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }).start();
+        }
+
+    }
+
+    public static void test1(List<Long> ids, DatabaseManager dbm) throws DatabaseException {
+        try (DatabaseHandler dbh = dbm.getHandler()) {
+            for (int i = 0; i < 10_000; i++) {
+                dbh.getSummoners(Platform.EUNE, ids);
+            }
+        }
+    }
+
+    public static void test2(List<Long> ids, DatabaseManager dbm) throws DatabaseException {
+        try (DatabaseHandler dbh = dbm.getHandler()) {
+            for (int i = 0; i < 10_000; i++) {
+                for (long id : ids) {
+                    List<Long> idl = new ArrayList<>(1);
+                    idl.add(id);
+                    dbh.getSummoners(Platform.EUNE, idl);
+                }
+            }
+        }
     }
 }

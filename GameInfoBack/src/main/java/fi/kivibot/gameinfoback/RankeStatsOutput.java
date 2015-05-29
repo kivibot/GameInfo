@@ -14,16 +14,12 @@ public class RankeStatsOutput {
     private int wins;
     @SerializedName("l")
     private int losses;
-    @SerializedName("wl")
-    private int wl;
     @SerializedName("k")
     private int kills;
     @SerializedName("d")
     private int deaths;
     @SerializedName("a")
     private int assists;
-    @SerializedName("kda")
-    private int kda;
 
     public int getGames() {
         return games;
@@ -49,14 +45,6 @@ public class RankeStatsOutput {
         this.losses = losses;
     }
 
-    public int getWl() {
-        return wl;
-    }
-
-    public void setWl(int wl) {
-        this.wl = wl;
-    }
-
     public int getKills() {
         return kills;
     }
@@ -79,14 +67,6 @@ public class RankeStatsOutput {
 
     public void setAssists(int assists) {
         this.assists = assists;
-    }
-
-    public int getKda() {
-        return kda;
-    }
-
-    public void setKda(int kda) {
-        this.kda = kda;
     }
 
     
