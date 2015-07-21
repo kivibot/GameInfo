@@ -1,9 +1,11 @@
-package fi.kivibot.riotapi.structures.current_game;
+package fi.kivibot.riotapi.structures.featured_game;
 
+import fi.kivibot.riotapi.structures.current_game.BannedChampion;
+import fi.kivibot.riotapi.structures.current_game.Observer;
 import java.util.List;
 import java.util.Objects;
 
-public class CurrentGameInfo {
+public class FeaturedGameInfo {
     
     private List<BannedChampion> bannedChampions;
     private long gameId;
@@ -14,10 +16,10 @@ public class CurrentGameInfo {
     private String gameType;
     private long mapId;
     private Observer observers;
-    private List<CurrentGameParticipant> participants;
+    private List<Participant> participants;
     private String platformId;
 
-    public CurrentGameInfo(List<BannedChampion> bannedChampions, long gameId, long gameLength, String gameMode, long gameQueueConfigId, long gameStartTime, String gameType, long mapId, Observer observers, List<CurrentGameParticipant> participants, String platformId) {
+    public FeaturedGameInfo(List<BannedChampion> bannedChampions, long gameId, long gameLength, String gameMode, long gameQueueConfigId, long gameStartTime, String gameType, long mapId, Observer observers, List<Participant> participants, String platformId) {
         this.bannedChampions = bannedChampions;
         this.gameId = gameId;
         this.gameLength = gameLength;
@@ -67,7 +69,7 @@ public class CurrentGameInfo {
         return observers;
     }
 
-    public List<CurrentGameParticipant> getParticipants() {
+    public List<Participant> getParticipants() {
         return participants;
     }
 
@@ -100,7 +102,7 @@ public class CurrentGameInfo {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final CurrentGameInfo other = (CurrentGameInfo) obj;
+        final FeaturedGameInfo other = (FeaturedGameInfo) obj;
         if (!Objects.equals(this.bannedChampions, other.bannedChampions)) {
             return false;
         }
@@ -139,7 +141,7 @@ public class CurrentGameInfo {
 
     @Override
     public String toString() {
-        return "CurrentGameInfo{" + "bannedChampions=" + bannedChampions + ", gameId=" + gameId + ", gameLength=" + gameLength + ", gameMode=" + gameMode + ", gameQueueConfigId=" + gameQueueConfigId + ", gameStartTime=" + gameStartTime + ", gameType=" + gameType + ", mapId=" + mapId + ", observers=" + observers + ", participants=" + participants + ", platformId=" + platformId + '}';
+        return "FeaturedGameInfo{" + "bannedChampions=" + bannedChampions + ", gameId=" + gameId + ", gameLength=" + gameLength + ", gameMode=" + gameMode + ", gameQueueConfigId=" + gameQueueConfigId + ", gameStartTime=" + gameStartTime + ", gameType=" + gameType + ", mapId=" + mapId + ", observers=" + observers + ", participants=" + participants + ", platformId=" + platformId + '}';
     }
     
 }

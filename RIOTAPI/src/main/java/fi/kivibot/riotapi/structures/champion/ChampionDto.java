@@ -2,12 +2,12 @@ package fi.kivibot.riotapi.structures.champion;
 
 public class ChampionDto {
 
-    private final boolean active;
-    private final boolean botEnabled;
-    private final boolean botMmEnabled;
-    private final boolean freeToPlay;
-    private final boolean id;
-    private final boolean rankedPlayEnabled;
+    private boolean active;
+    private boolean botEnabled;
+    private boolean botMmEnabled;
+    private boolean freeToPlay;
+    private boolean id;
+    private boolean rankedPlayEnabled;
 
     public ChampionDto(boolean active, boolean botEnabled, boolean botMmEnabled, boolean freeToPlay, boolean id, boolean rankedPlayEnabled) {
         this.active = active;

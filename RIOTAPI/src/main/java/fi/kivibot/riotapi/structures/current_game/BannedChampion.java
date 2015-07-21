@@ -2,9 +2,9 @@ package fi.kivibot.riotapi.structures.current_game;
 
 public class BannedChampion {
 
-    private final long championId;
-    private final int pickTurn;
-    private final long teamId;
+    private long championId;
+    private int pickTurn;
+    private long teamId;
 
     public BannedChampion(long championId, int pickTurn, long teamId) {
         this.championId = championId;

@@ -5,7 +5,7 @@ import java.util.Objects;
 
 public class ChampionListDto {
 
-    private final List<ChampionDto> champions;
+    private List<ChampionDto> champions;
 
     public ChampionListDto(List<ChampionDto> champions) {
         this.champions = champions;

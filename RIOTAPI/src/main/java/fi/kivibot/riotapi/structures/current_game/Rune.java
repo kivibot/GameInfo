@@ -2,8 +2,8 @@ package fi.kivibot.riotapi.structures.current_game;
 
 public class Rune {
 
-    private final int count;
-    private final long runeId;
+    private int count;
+    private long runeId;
 
     public Rune(int count, long runeId) {
         this.count = count;

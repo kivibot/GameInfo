@@ -5,16 +5,16 @@ import java.util.Objects;
 
 public class CurrentGameParticipant {
 
-    private final boolean bot;
-    private final long championId;
-    private final List<Mastery> masteries;
-    private final long profileIconId;
-    private final List<Rune> runes;
-    private final long spell1Id;
-    private final long spell2Id;
-    private final long summonerId;
-    private final String summonerName;
-    private final long teamId;
+    private boolean bot;
+    private long championId;
+    private List<Mastery> masteries;
+    private long profileIconId;
+    private List<Rune> runes;
+    private long spell1Id;
+    private long spell2Id;
+    private long summonerId;
+    private String summonerName;
+    private long teamId;
 
     public CurrentGameParticipant(boolean bot, long championId, List<Mastery> masteries, long profileIconId, List<Rune> runes, long spell1Id, long spell2Id, long summonerId, String summonerName, long teamId) {
         this.bot = bot;

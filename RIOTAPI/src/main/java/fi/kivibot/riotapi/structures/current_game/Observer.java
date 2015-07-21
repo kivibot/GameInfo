@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class Observer {
 
-    private final String encryptionKey;
+    private String encryptionKey;
 
     public Observer(String encryptionKey) {
         this.encryptionKey = encryptionKey;

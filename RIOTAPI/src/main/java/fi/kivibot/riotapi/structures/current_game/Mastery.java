@@ -2,8 +2,8 @@ package fi.kivibot.riotapi.structures.current_game;
 
 public class Mastery {
 
-    private final long masteryId;
-    private final int rank;
+    private long masteryId;
+    private int rank;
 
     public Mastery(long masteryId, int rank) {
         this.masteryId = masteryId;
