@@ -21,7 +21,7 @@ public class RestClient {
     public <T> RestResult<T> getJSON(URL url, Class<T> type) throws IOException {
         RestResult<String> result = get(url);
         Gson gson = new GsonBuilder().create();
-        RestResult<T> ret = new RestResult<>(gson.fromJson(result.getValue(), type), result.getReturnCode());
+        RestResult<T> ret = new RestResult<>(gson.fromJson(result.getValue(), type), result.getResponseCode());
         return ret; 
    }
 
@@ -36,7 +36,7 @@ public class RestClient {
     public RestResult<String> get(URL url) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         String body = new Scanner(conn.getInputStream()).next();
-        return new RestResult<>(body, conn.getResponseCode());
+        return new RestResult<>(body, ResponseCode.parseInteger(conn.getResponseCode()));
     }
 
     public RestResult<String> get(QueryBuilder url) throws MalformedURLException, IOException {

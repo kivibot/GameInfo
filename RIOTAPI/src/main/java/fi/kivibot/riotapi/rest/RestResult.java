@@ -5,21 +5,21 @@ package fi.kivibot.riotapi.rest;
  * @author Nicklas
  */
 public class RestResult<T> {
-    
-    private final T value;
-    private final int returnCode;
 
-    public RestResult(T value, int returnCode) {
+    private final T value;
+    private final ResponseCode responseCode;
+
+    public RestResult(T value, ResponseCode responseCode) {
         this.value = value;
-        this.returnCode = returnCode;
+        this.responseCode = responseCode;
     }
 
     public T getValue() {
         return value;
     }
 
-    public int getReturnCode() {
-        return returnCode;
+    public ResponseCode getResponseCode() {
+        return responseCode;
     }
-    
+
 }
