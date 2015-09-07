@@ -6,10 +6,10 @@ public class ChampionDto {
     private boolean botEnabled;
     private boolean botMmEnabled;
     private boolean freeToPlay;
-    private boolean id;
+    private long id;
     private boolean rankedPlayEnabled;
 
-    public ChampionDto(boolean active, boolean botEnabled, boolean botMmEnabled, boolean freeToPlay, boolean id, boolean rankedPlayEnabled) {
+    public ChampionDto(boolean active, boolean botEnabled, boolean botMmEnabled, boolean freeToPlay, long id, boolean rankedPlayEnabled) {
         this.active = active;
         this.botEnabled = botEnabled;
         this.botMmEnabled = botMmEnabled;
@@ -34,7 +34,7 @@ public class ChampionDto {
         return freeToPlay;
     }
 
-    public boolean isId() {
+    public long isId() {
         return id;
     }
 
@@ -54,7 +54,7 @@ public class ChampionDto {
         hash = 37 * hash + (this.botEnabled ? 1 : 0);
         hash = 37 * hash + (this.botMmEnabled ? 1 : 0);
         hash = 37 * hash + (this.freeToPlay ? 1 : 0);
-        hash = 37 * hash + (this.id ? 1 : 0);
+        hash = (int) (37 * hash + this.id);
         hash = 37 * hash + (this.rankedPlayEnabled ? 1 : 0);
         return hash;
     }
