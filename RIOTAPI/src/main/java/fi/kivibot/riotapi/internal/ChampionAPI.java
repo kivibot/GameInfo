@@ -12,6 +12,7 @@ import java.io.IOException;
 
 /**
  * Version: 1.2
+ *
  * @author Nicklas
  */
 public class ChampionAPI {
@@ -27,31 +28,21 @@ public class ChampionAPI {
     }
 
     public ChampionListDto getAll(Region region, boolean f2p) throws IOException, RateLimitException, RiotException {
-        QueryBuilder query = new QueryBuilder();
-        query.append("https://{0}.api.pvp.net", region.getName());
-        query.append("/api/lol/{0}/v1.2/champion?freeToPlay={1}", region.name(), "" + f2p);
-        query.append("&api_key={0}", apiKey);
-        RestResult<ChampionListDto> result = new RestClient().getJSON(query, ChampionListDto.class);
-        if (result.getResponseCode().isSuccess()) {
-            return result.getValue();
-        } else {
-            if (result.getResponseCode().getCode() == 429) {
-                throw new RateLimitException("Rate limit exceeded");
-            } else if (result.getResponseCode().isServerError()) {
-                throw new RiotException("Error: " + result.getResponseCode().getCode());
-            } else if (result.getResponseCode().isClientError()) {
-                throw new IOException("Error: " + result.getResponseCode().getCode());
-            }
-            throw new RuntimeException("Unknown error! " + result.getResponseCode().getCode());
-        }
+        return get(ChampionListDto.class,
+                new QueryBuilder().append("https://{0}.api.pvp.net", region.getName())
+                .append("/api/lol/{0}/v1.2/champion?freeToPlay={1}", region.name(), "" + f2p)
+                .append("&api_key={0}", apiKey));
     }
 
     public ChampionDto getById(Region region, int id) throws IOException, RateLimitException, RiotException {
-        QueryBuilder query = new QueryBuilder();
-        query.append("https://{0}.api.pvp.net", region.getName());
-        query.append("/api/lol/{0}/v1.2/champion/{1}", region.name(), "" + id);
-        query.append("?api_key={0}", apiKey);
-        RestResult<ChampionDto> result = new RestClient().getJSON(query, ChampionDto.class);
+        return get(ChampionDto.class,
+                new QueryBuilder().append("https://{0}.api.pvp.net", region.getName())
+                .append("/api/lol/{0}/v1.2/champion/{1}", region.name(), "" + id)
+                .append("?api_key={0}", apiKey));
+    }
+
+    private <T> T get(Class<T> type, QueryBuilder query) throws IOException, RateLimitException, RiotException {
+        RestResult<T> result = new RestClient().getJSON(query, type);
         if (result.getResponseCode().isSuccess()) {
             return result.getValue();
         } else {
