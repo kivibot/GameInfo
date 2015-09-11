@@ -3,6 +3,7 @@ package fi.kivibot.riotapi.rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,6 +30,22 @@ public class RestClient {
         return getJSON(url.build(), type);
     }
 
+    public RestResult getJSON(String url, Type type) throws MalformedURLException, IOException {
+        return getJSON(new URL(url), type);
+    }
+
+    public RestResult getJSON(URL url, Type type) throws IOException {
+        RestResult<String> result = get(url);
+        Gson gson = new GsonBuilder().create();
+        System.out.println(result.getValue());
+        RestResult ret = new RestResult<>(gson.fromJson(result.getValue(), type), result.getResponseCode());
+        return ret;
+    }
+
+    public RestResult getJSON(QueryBuilder url, Type type) throws MalformedURLException, IOException {
+        return getJSON(url.build(), type);
+    }
+
     public RestResult<String> get(String url) throws MalformedURLException, IOException {
         return get(new URL(url));
     }
@@ -38,7 +55,7 @@ public class RestClient {
         ResponseCode code = ResponseCode.parseInteger(conn.getResponseCode());
         String body = null;
         if (code.isSuccess()) {
-            body = new Scanner(conn.getInputStream()).next();
+            body = new Scanner(conn.getInputStream()).nextLine();
         }
         return new RestResult<>(body, code);
     }

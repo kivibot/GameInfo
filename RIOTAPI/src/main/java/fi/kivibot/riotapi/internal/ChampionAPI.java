@@ -15,12 +15,10 @@ import java.io.IOException;
  *
  * @author Nicklas
  */
-public class ChampionAPI {
-
-    private final String apiKey;
+public class ChampionAPI extends APIBase {
 
     public ChampionAPI(String apiKey) {
-        this.apiKey = apiKey;
+        super(apiKey);
     }
 
     public ChampionListDto getAll(Region region) throws IOException, RateLimitException, RiotException {
@@ -39,22 +37,6 @@ public class ChampionAPI {
                 new QueryBuilder().append("https://{0}.api.pvp.net", region.getName())
                 .append("/api/lol/{0}/v1.2/champion/{1}", region.name(), "" + id)
                 .append("?api_key={0}", apiKey));
-    }
-
-    private <T> T get(Class<T> type, QueryBuilder query) throws IOException, RateLimitException, RiotException {
-        RestResult<T> result = new RestClient().getJSON(query, type);
-        if (result.getResponseCode().isSuccess()) {
-            return result.getValue();
-        } else {
-            if (result.getResponseCode().getCode() == 429) {
-                throw new RateLimitException("Rate limit exceeded");
-            } else if (result.getResponseCode().isServerError()) {
-                throw new RiotException("Error: " + result.getResponseCode().getCode());
-            } else if (result.getResponseCode().isClientError()) {
-                throw new IOException("Error: " + result.getResponseCode().getCode());
-            }
-            throw new RuntimeException("Unknown error! " + result.getResponseCode().getCode());
-        }
     }
 
 }
