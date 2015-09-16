@@ -37,7 +37,6 @@ public class RestClient {
     public RestResult getJSON(URL url, Type type) throws IOException {
         RestResult<String> result = get(url);
         Gson gson = new GsonBuilder().create();
-        System.out.println(result.getValue());
         RestResult ret = new RestResult<>(gson.fromJson(result.getValue(), type), result.getResponseCode());
         return ret;
     }
