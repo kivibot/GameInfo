@@ -3,7 +3,121 @@ body {
 
 .container {
   background-color: white;
-  margin-top: 5px;
-  border: solid 1px #e8e8e8; }
+  margin-top: 15px;
+  border: solid 1px #e8e8e8;
+  padding: 0; }
+
+.fill {
+  width: 100%; }
+
+.top-row {
+  padding: 15px; }
+
+@media (max-width: 996px) {
+  .title {
+    display: block; } }
+
+.subtitle {
+  font-size: 20px;
+  color: gray; }
+
+.no-padding-left, .no-padding {
+  padding-left: 0; }
+
+.no-padding-right, .no-padding {
+  padding-right: 0; }
+
+@media (max-width: 991px) {
+  .no-padding-right-sm {
+    padding-right: 0; } }
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .no-padding-right-md {
+    padding-right: 0; } }
+
+.float-right {
+  float: right; }
+
+.teams .blue-team {
+  background-color: #4F94D9;
+  padding-left: 15px;
+  padding-right: 15px; }
+.teams .blue-team .summoners {
+  color: black; }
+.teams .blue-team .summoners > .row:nth-child(odd) {
+  background-color: white; }
+.teams .blue-team .summoners > .row:nth-child(even) {
+  background-color: #f0f0f0; }
+.teams .blue-team .summoners .summoner .summoner-name {
+  color: grey;
+  font-size: 20px;
+  height: 100%; }
+.teams .blue-team .summoners .summoner .summoner-spell {
+  width: 50%; }
+.teams .blue-team .summoners .summoner .champion {
+  padding-left: 15px; }
+.teams .blue-team .summoners .summoner .champion .champion-img {
+  padding: 0; }
+.teams .blue-team .summoners .summoner .champion .summoner-spells {
+  padding: 0; }
+.teams .blue-team .summoners .summoner .soloq .green {
+  color: green; }
+.teams .blue-team .summoners .summoner .soloq .red {
+  color: red; }
+.teams .blue-team .summoners .summoner .soloq .blue {
+  color: blue; }
+.teams .blue-team .team-header, .teams .blue-team .team-footer {
+  padding-top: 7.5px;
+  padding-bottom: 7.5px;
+  font-weight: bold;
+  color: white; }
+.teams .purple-team {
+  background-color: red;
+  padding-left: 15px;
+  padding-right: 15px; }
+.teams .purple-team .summoners {
+  color: black; }
+.teams .purple-team .summoners > .row:nth-child(odd) {
+  background-color: white; }
+.teams .purple-team .summoners > .row:nth-child(even) {
+  background-color: #f0f0f0; }
+.teams .purple-team .summoners .summoner .summoner-name {
+  color: grey;
+  font-size: 20px;
+  height: 100%; }
+.teams .purple-team .summoners .summoner .summoner-spell {
+  width: 50%; }
+.teams .purple-team .summoners .summoner .champion {
+  padding-left: 15px; }
+.teams .purple-team .summoners .summoner .champion .champion-img {
+  padding: 0; }
+.teams .purple-team .summoners .summoner .champion .summoner-spells {
+  padding: 0; }
+.teams .purple-team .summoners .summoner .soloq .green {
+  color: green; }
+.teams .purple-team .summoners .summoner .soloq .red {
+  color: red; }
+.teams .purple-team .summoners .summoner .soloq .blue {
+  color: blue; }
+.teams .purple-team .team-header, .teams .purple-team .team-footer {
+  padding-top: 7.5px;
+  padding-bottom: 7.5px;
+  font-weight: bold;
+  color: white; }
+
+/*
+    
+    & {
+        background-color: #4F94D9;
+        padding-top: $margin-small/2;
+        padding-bottom: $margin-small/2;
+        padding-left: $margin-small;
+        padding-right: $margin-small;
+        color: white;   
+        font-weight: bold;
+    }
+}
+
+*/
 
 /*# sourceMappingURL=main.css.map */

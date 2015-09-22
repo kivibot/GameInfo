@@ -1,4 +1,8 @@
-$margin-small: 5px;
+$margin-small: 15px;
+$green: green;
+$red: red;
+$blue: blue;
+$blue-team-color: #4F94D9;
 
 body {
     background-image: url("../img/bg.png");
@@ -8,4 +12,138 @@ body {
     background-color: white;
     margin-top: $margin-small;
     border: solid 1px #e8e8e8;
+    padding: 0;
 }
+
+.fill {
+    width: 100%;
+}
+
+.top-row {
+    padding: $margin-small;
+}
+
+.title {
+    @media (max-width: 996px) {
+        display: block;
+    }
+}
+
+.subtitle {
+    font-size: 20px;
+    color: gray;
+}
+
+.no-padding-left {
+    padding-left: 0;
+}
+
+.no-padding-right {
+    padding-right: 0;
+}
+
+.no-padding-right-sm {
+    @media (max-width: 991px){
+        padding-right: 0;
+    }
+}
+
+.no-padding-right-md {
+    @media (min-width:992px) and (max-width: 1199px){
+        padding-right: 0;
+    }
+}
+
+.no-padding {
+    @extend .no-padding-left; 
+    @extend .no-padding-right;
+}
+
+
+.float-right {
+    float: right;
+}
+
+.teams {
+    @mixin team($team-color){
+        & {
+            background-color: $team-color;
+            padding-left: $margin-small;
+            padding-right: $margin-small;
+        }
+        .summoners {
+            & {
+                color: black;
+            }
+            > .row  {
+                &:nth-child(odd){
+                    background-color: white;
+                }
+                &:nth-child(even){
+                    background-color: #f0f0f0;
+                }
+                & {
+                }
+            }
+            .summoner {
+                .summoner-name {
+                    color: grey;
+                    font-size: 20px;
+                    height: 100%;
+                }
+                .summoner-spell {
+                    width: 50%;
+                }
+                .champion
+                { 
+                    & {
+                        padding-left: $margin-small;
+                    }
+                    .champion-img {
+                        padding: 0;
+                    }
+                    .summoner-spells {
+                        padding: 0;
+                    }
+                }
+                .league-text{
+                }
+                .soloq {
+                    & {
+                    }
+                    .green{
+                        color: $green;
+                    }
+                    .red{
+                        color: $red;
+                    }
+                    .blue{
+                        color: $blue;
+                    }
+                }
+            }
+        }
+        .team-header, .team-footer {            
+            padding-top: $margin-small/2;
+            padding-bottom: $margin-small/2;
+            font-weight: bold;
+            color: white;   
+        }
+    }
+    .blue-team{@include team($blue-team-color);}
+    .purple-team{@include team(red);}
+}
+/*
+    
+    & {
+        background-color: #4F94D9;
+        padding-top: $margin-small/2;
+        padding-bottom: $margin-small/2;
+        padding-left: $margin-small;
+        padding-right: $margin-small;
+        color: white;   
+        font-weight: bold;
+    }
+}
+
+*/
