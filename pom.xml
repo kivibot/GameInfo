@@ -7,7 +7,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>RIOTAPI</module>
-        <module>Web</module>
+        <module>SummonerBackend</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

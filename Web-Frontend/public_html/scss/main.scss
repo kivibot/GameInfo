@@ -1,0 +1,11 @@
+$margin-small: 5px;
+
+body {
+    background-image: url("../img/bg.png");
+}
+
+.container {
+    background-color: white;
+    margin-top: $margin-small;
+    border: solid 1px #e8e8e8;
+}
