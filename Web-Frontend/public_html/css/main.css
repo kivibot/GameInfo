@@ -43,67 +43,100 @@ body {
   padding-left: 15px;
   padding-right: 15px; }
 .teams .blue-team .summoners {
-  color: black; }
+  color: black;
+  font-weight: bold; }
 .teams .blue-team .summoners > .row:nth-child(odd) {
   background-color: white; }
 .teams .blue-team .summoners > .row:nth-child(even) {
   background-color: #f0f0f0; }
+.teams .blue-team .summoners .summoner {
+  height: 40px; }
+.teams .blue-team .summoners .summoner .vcp {
+  display: table; }
 .teams .blue-team .summoners .summoner .summoner-name {
   color: grey;
   font-size: 20px;
-  height: 100%; }
+  line-height: 40px; }
 .teams .blue-team .summoners .summoner .summoner-spell {
   width: 50%; }
-.teams .blue-team .summoners .summoner .champion {
-  padding-left: 15px; }
 .teams .blue-team .summoners .summoner .champion .champion-img {
   padding: 0; }
+  .teams .blue-team .summoners .summoner .champion .champion-img > img {
+    height: 40px;
+    float: right; }
 .teams .blue-team .summoners .summoner .champion .summoner-spells {
   padding: 0; }
-.teams .blue-team .summoners .summoner .soloq .green {
-  color: green; }
-.teams .blue-team .summoners .summoner .soloq .red {
-  color: red; }
-.teams .blue-team .summoners .summoner .soloq .blue {
-  color: blue; }
+  .teams .blue-team .summoners .summoner .champion .summoner-spells > img {
+    height: 20px;
+    float: left; }
+.teams .blue-team .summoners .summoner .league-img > img {
+  height: 40px; }
+.teams .blue-team .summoners .summoner .league-text {
+  font-weight: bold; }
+.teams .blue-team .summoners .summoner .runes, .teams .blue-team .summoners .summoner .masteries, .teams .blue-team .summoners .summoner .summoner-name {
+  line-height: 40px; }
 .teams .blue-team .team-header, .teams .blue-team .team-footer {
-  padding-top: 7.5px;
-  padding-bottom: 7.5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   font-weight: bold;
   color: white; }
 .teams .purple-team {
-  background-color: red;
+  background-color: #D26FA7;
   padding-left: 15px;
   padding-right: 15px; }
 .teams .purple-team .summoners {
-  color: black; }
+  color: black;
+  font-weight: bold; }
 .teams .purple-team .summoners > .row:nth-child(odd) {
   background-color: white; }
 .teams .purple-team .summoners > .row:nth-child(even) {
   background-color: #f0f0f0; }
+.teams .purple-team .summoners .summoner {
+  height: 40px; }
+.teams .purple-team .summoners .summoner .vcp {
+  display: table; }
 .teams .purple-team .summoners .summoner .summoner-name {
   color: grey;
   font-size: 20px;
-  height: 100%; }
+  line-height: 40px; }
 .teams .purple-team .summoners .summoner .summoner-spell {
   width: 50%; }
-.teams .purple-team .summoners .summoner .champion {
-  padding-left: 15px; }
 .teams .purple-team .summoners .summoner .champion .champion-img {
   padding: 0; }
+  .teams .purple-team .summoners .summoner .champion .champion-img > img {
+    height: 40px;
+    float: right; }
 .teams .purple-team .summoners .summoner .champion .summoner-spells {
   padding: 0; }
-.teams .purple-team .summoners .summoner .soloq .green {
-  color: green; }
-.teams .purple-team .summoners .summoner .soloq .red {
-  color: red; }
-.teams .purple-team .summoners .summoner .soloq .blue {
-  color: blue; }
+  .teams .purple-team .summoners .summoner .champion .summoner-spells > img {
+    height: 20px;
+    float: left; }
+.teams .purple-team .summoners .summoner .league-img > img {
+  height: 40px; }
+.teams .purple-team .summoners .summoner .league-text {
+  font-weight: bold; }
+.teams .purple-team .summoners .summoner .runes, .teams .purple-team .summoners .summoner .masteries, .teams .purple-team .summoners .summoner .summoner-name {
+  line-height: 40px; }
 .teams .purple-team .team-header, .teams .purple-team .team-footer {
-  padding-top: 7.5px;
-  padding-bottom: 7.5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   font-weight: bold;
   color: white; }
+
+.green {
+  color: #33aa00;
+  font-weight: bold; }
+
+.red {
+  color: #ff7777;
+  font-weight: bold; }
+
+.blue {
+  color: #7777ff;
+  font-weight: bold; }
+
+.text-center {
+  text-align: center; }
 
 /*
     

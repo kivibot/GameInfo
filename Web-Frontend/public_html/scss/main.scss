@@ -1,8 +1,10 @@
 $margin-small: 15px;
-$green: green;
-$red: red;
-$blue: blue;
+$green: #33aa00;
+$red: #ff7777;
+$blue: #7777ff;
 $blue-team-color: #4F94D9;
+$purple-team-color: #D26FA7;
+$line-height: 20px;
 
 body {
     background-image: url("../img/bg.png");
@@ -74,6 +76,7 @@ body {
         .summoners {
             & {
                 color: black;
+                font-weight: bold;
             }
             > .row  {
                 &:nth-child(odd){
@@ -86,10 +89,18 @@ body {
                 }
             }
             .summoner {
+                & {
+                    height: 40px;
+                }
+                .vcp {
+                    & {   
+                        display: table;
+                    }
+                }
                 .summoner-name {
                     color: grey;
                     font-size: 20px;
-                    height: 100%;
+                    line-height: 40px;
                 }
                 .summoner-spell {
                     width: 50%;
@@ -97,42 +108,66 @@ body {
                 .champion
                 { 
                     & {
-                        padding-left: $margin-small;
                     }
                     .champion-img {
                         padding: 0;
+                        > img{
+                            height: $line-height*2;
+                            float: right;
+                        }
                     }
                     .summoner-spells {
                         padding: 0;
+                        > img {
+                            height: $line-height;
+                            float: left;
+                        }
                     }
                 }
+                .league-img > img{
+                    height: $line-height*2;
+                }
                 .league-text{
+                    font-weight: bold;
                 }
                 .soloq {
                     & {
                     }
-                    .green{
-                        color: $green;
-                    }
-                    .red{
-                        color: $red;
-                    }
-                    .blue{
-                        color: $blue;
-                    }
+
+                }
+                .runes, .masteries, .summoner-name {       
+                    line-height: $line-height*2;
                 }
             }
         }
         .team-header, .team-footer {            
-            padding-top: $margin-small/2;
-            padding-bottom: $margin-small/2;
+            padding-top: $line-height/2;
+            padding-bottom: $line-height/2;
             font-weight: bold;
             color: white;   
         }
     }
     .blue-team{@include team($blue-team-color);}
-    .purple-team{@include team(red);}
+    .purple-team{@include team($purple-team-color);}
 }
+
+.green{
+    color: $green;
+    font-weight: bold;
+}
+.red{
+    color: $red;
+    font-weight: bold;
+}
+.blue{
+    color: $blue;
+    font-weight: bold;
+}
+
+.text-center{
+    text-align: center;
+}
+
 /*
     
     & {
