@@ -50,9 +50,9 @@ public class MariaDBHandler implements DBHandler {
             Map<Long, DBSummoner> map = new HashMap<>();
             while (rs.next()) {
                 long id = rs.getInt("id");
-                map.put(id, new DBSummoner(null, null, id,
+                map.put(id, new DBSummoner(0, 0, id,
                         rs.getString("name"), rs.getInt("profileIconId"),
-                        (long) rs.getInt("revisionDate"), rs.getInt("summonerLevel")));
+                        rs.getLong("revisionDate"), rs.getInt("summonerLevel")));
             }
             return map;
         }
@@ -67,7 +67,7 @@ public class MariaDBHandler implements DBHandler {
                 ps.setInt(2, (int) summoner.getId());
                 ps.setString(3, summoner.getName());
                 ps.setInt(4, summoner.getProfileIconId());
-                ps.setInt(5, (int) summoner.getRevisionDate());
+                ps.setLong(5, summoner.getRevisionDate());
                 ps.setInt(6, (int) summoner.getSummonerLevel());
                 ps.addBatch();
             }
@@ -82,7 +82,7 @@ public class MariaDBHandler implements DBHandler {
             for (DBSummoner summoner : summoners) {
                 ps.setString(1, summoner.getName());
                 ps.setInt(2, summoner.getProfileIconId());
-                ps.setInt(3, (int) summoner.getRevisionDate());
+                ps.setLong(3, summoner.getRevisionDate());
                 ps.setInt(4, (int) summoner.getSummonerLevel());
                 ps.setString(5, region.getName());
                 ps.setInt(6, (int) summoner.getId());
@@ -105,9 +105,9 @@ public class MariaDBHandler implements DBHandler {
             Map<String, DBSummoner> map = new HashMap<>();
             while (rs.next()) {
                 String name = rs.getString("name");
-                map.put(name, new DBSummoner(null, null, rs.getInt("id"),
+                map.put(name, new DBSummoner(0, 0, rs.getInt("id"),
                         name, rs.getInt("profileIconId"),
-                        (long) rs.getInt("revisionDate"), rs.getInt("summonerLevel")));
+                        rs.getLong("revisionDate"), rs.getInt("summonerLevel")));
             }
             return map;
         }

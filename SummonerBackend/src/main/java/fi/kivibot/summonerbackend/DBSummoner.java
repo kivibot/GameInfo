@@ -9,24 +9,24 @@ import java.sql.Timestamp;
  */
 public class DBSummoner extends SummonerDto {
 
-    private Timestamp lastUpdated;
-    private Timestamp lastSuccess;
+    private long lastUpdated;
+    private long lastSuccess;
 
-    public DBSummoner(Timestamp lastUpdated, Timestamp lastSuccess, long id, String name, int profileIconId, long revisionDate, long summonerLevel) {
+    public DBSummoner(long lastUpdated, long lastSuccess, long id, String name, int profileIconId, long revisionDate, long summonerLevel) {
         super(id, name, profileIconId, revisionDate, summonerLevel);
         this.lastUpdated = lastUpdated;
         this.lastSuccess = lastSuccess;
     }
 
-    public DBSummoner(Timestamp lastUpdated, Timestamp lastSuccess, SummonerDto sum) {
+    public DBSummoner(long lastUpdated, long lastSuccess, SummonerDto sum) {
         this(lastUpdated, lastSuccess, sum.getId(), sum.getName(), sum.getProfileIconId(), sum.getRevisionDate(), sum.getSummonerLevel());
     }
 
-    public Timestamp getLastUpdated() {
+    public long getLastUpdated() {
         return lastUpdated;
     }
 
-    public Timestamp getLastSuccess() {
+    public long getLastSuccess() {
         return lastSuccess;
     }
 

@@ -51,11 +51,13 @@ public class RestClient {
 
     public RestResult<String> get(URL url) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
         ResponseCode code = ResponseCode.parseInteger(conn.getResponseCode());
         String body = null;
         if (code.isSuccess()) {
             body = new Scanner(conn.getInputStream()).nextLine();
         }
+        conn.getInputStream().close();
         return new RestResult<>(body, code);
     }
 
