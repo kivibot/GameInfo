@@ -64,6 +64,17 @@ public class UpdateSummoners implements Callable<Map<Long, DBSummoner>> {
                     updated2.put(dbsum.getId(), dbsum);
                 }
             }
+            for (Long id : update) {
+                if (!updated.containsKey(id.toString())) {
+                    DBSummoner dbsum = new DBSummoner(System.currentTimeMillis(), System.currentTimeMillis(), id);
+                    summonerCache.put(dbsum.getId(), dbsum);
+                    if (ids.contains(id)) {
+                        insert.put(dbsum.getId(), dbsum);
+                    } else {
+                        updated2.put(dbsum.getId(), dbsum);
+                    }
+                }
+            }
             try {
                 if (!insert.isEmpty() || !updated.isEmpty()) {
                     dbh.transaction((tdbh) -> {
@@ -77,7 +88,7 @@ public class UpdateSummoners implements Callable<Map<Long, DBSummoner>> {
                 }
             } catch (IOException | SQLException e) {
                 //TODO: handle
-                System.out.println(e);
+                throw new RuntimeException(e);
             }
 
             output.putAll(updated2);

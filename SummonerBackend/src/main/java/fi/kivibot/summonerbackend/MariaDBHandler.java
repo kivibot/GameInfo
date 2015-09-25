@@ -40,7 +40,7 @@ public class MariaDBHandler implements DBHandler {
     @Override
     public Map<Long, DBSummoner> getSummoners(Region region, Collection<Long> ids) throws IOException, SQLException {
         try (Connection conn = getConnection()) {
-            PreparedStatement ps = conn.prepareStatement("select id, name, profileIconId, revisionDate, summonerLevel from summoner where region=? and id=?");
+            PreparedStatement ps = conn.prepareStatement("select id, name, profileIconId, revisionDate, summonerLevel, exists from summoner where region=? and id=?");
             for (long id : ids) {
                 ps.setString(1, region.getName());
                 ps.setInt(2, (int) id);
@@ -50,7 +50,7 @@ public class MariaDBHandler implements DBHandler {
             Map<Long, DBSummoner> map = new HashMap<>();
             while (rs.next()) {
                 long id = rs.getInt("id");
-                map.put(id, new DBSummoner(0, 0, id,
+                map.put(id, new DBSummoner(0, 0, rs.getBoolean("exists"), id,
                         rs.getString("name"), rs.getInt("profileIconId"),
                         rs.getLong("revisionDate"), rs.getInt("summonerLevel")));
             }
@@ -61,14 +61,16 @@ public class MariaDBHandler implements DBHandler {
     @Override
     public void insertSummoners(Region region, Collection<DBSummoner> summoners) throws IOException, SQLException {
         try (Connection conn = getConnection()) {
-            PreparedStatement ps = conn.prepareStatement("insert into summoner (region, id, name, profileIconId, revisionDate, summonerLevel) values (?, ?, ?, ?, ?, ?)");
+            PreparedStatement ps = conn.prepareStatement("insert into summoner (region, id, name, profileIconId, revisionDate, summonerLevel, exists_) values (?, ?, ?, ?, ?, ?, ?)");
             for (DBSummoner summoner : summoners) {
-                ps.setString(1, region.getName());
-                ps.setInt(2, (int) summoner.getId());
-                ps.setString(3, summoner.getName());
-                ps.setInt(4, summoner.getProfileIconId());
-                ps.setLong(5, summoner.getRevisionDate());
-                ps.setInt(6, (int) summoner.getSummonerLevel());
+                int i=0;
+                ps.setString(++i, region.getName());
+                ps.setInt(++i, (int) summoner.getId());
+                ps.setString(++i, summoner.getName());
+                ps.setInt(++i, summoner.getProfileIconId());
+                ps.setLong(++i, summoner.getRevisionDate());
+                ps.setInt(++i, (int) summoner.getSummonerLevel());
+                ps.setBoolean(++i, summoner.exists());
                 ps.addBatch();
             }
             ps.executeBatch();
@@ -78,14 +80,16 @@ public class MariaDBHandler implements DBHandler {
     @Override
     public void updateSummoners(Region region, Collection<DBSummoner> summoners) throws IOException, SQLException {
         try (Connection conn = getConnection()) {
-            PreparedStatement ps = conn.prepareStatement("update summoner set name=?,profileIconId=?,revisionDate=?,summonerLevel=? where region=? and id=? ");
+            PreparedStatement ps = conn.prepareStatement("update summoner set exists_=?,name=?,profileIconId=?,revisionDate=?,summonerLevel=? where region=? and id=? ");
             for (DBSummoner summoner : summoners) {
-                ps.setString(1, summoner.getName());
-                ps.setInt(2, summoner.getProfileIconId());
-                ps.setLong(3, summoner.getRevisionDate());
-                ps.setInt(4, (int) summoner.getSummonerLevel());
-                ps.setString(5, region.getName());
-                ps.setInt(6, (int) summoner.getId());
+                int i=0;
+                ps.setBoolean(++i, summoner.exists());
+                ps.setString(++i, summoner.getName());
+                ps.setInt(++i, summoner.getProfileIconId());
+                ps.setLong(++i, summoner.getRevisionDate());
+                ps.setInt(++i, (int) summoner.getSummonerLevel());
+                ps.setString(++i, region.getName());
+                ps.setInt(++i, (int) summoner.getId());
                 ps.addBatch();
             }
             ps.executeBatch();
@@ -95,7 +99,7 @@ public class MariaDBHandler implements DBHandler {
     @Override
     public Map<String, DBSummoner> getSummonersByName(Region region, Collection<String> names) throws IOException, SQLException {
         try (Connection conn = getConnection()) {
-            PreparedStatement ps = conn.prepareStatement("select id, name, profileIconId, revisionDate, summonerLevel from summoner where region=? and name=?");
+            PreparedStatement ps = conn.prepareStatement("select id, name, profileIconId, revisionDate, summonerLevel, exists from summoner where region=? and name=?");
             for (String name : names) {
                 ps.setString(1, region.getName());
                 ps.setString(2, name);
@@ -105,7 +109,7 @@ public class MariaDBHandler implements DBHandler {
             Map<String, DBSummoner> map = new HashMap<>();
             while (rs.next()) {
                 String name = rs.getString("name");
-                map.put(name, new DBSummoner(0, 0, rs.getInt("id"),
+                map.put(name, new DBSummoner(0, 0, rs.getBoolean("exists"), rs.getInt("id"),
                         name, rs.getInt("profileIconId"),
                         rs.getLong("revisionDate"), rs.getInt("summonerLevel")));
             }

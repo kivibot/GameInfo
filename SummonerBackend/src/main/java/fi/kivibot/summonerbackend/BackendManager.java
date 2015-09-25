@@ -19,6 +19,14 @@ public class BackendManager {
     private final DBHandler dbHandler;
     private final String apiKey;
 
+    public BackendManager(Cache<Long, DBSummoner> summonerCache, ExecutorService executorService, DBHandler dbHandler, String apiKey) {
+        this.summonerCache = summonerCache;
+        this.executorService = executorService;
+        this.dbHandler = dbHandler;
+        this.apiKey = apiKey;
+    }
+
+    
     
     public Map<Long, ? extends SummonerDto> getSummoners(Region region, Collection<Long> ids) throws ExecutionException, InterruptedException{
         UpdateSummoners us = new UpdateSummoners(new SummonerAPI(apiKey), summonerCache, dbHandler, region, ids);
