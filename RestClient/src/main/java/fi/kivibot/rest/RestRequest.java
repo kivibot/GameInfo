@@ -1,4 +1,4 @@
-package fi.kivibot.riotapi.rest;
+package fi.kivibot.rest;
 
 import java.net.URL;
 import java.util.ArrayList;

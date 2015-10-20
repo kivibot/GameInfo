@@ -1,4 +1,4 @@
-package fi.kivibot.riotapi.rest;
+package fi.kivibot.rest;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;

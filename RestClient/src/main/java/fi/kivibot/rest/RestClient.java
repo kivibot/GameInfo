@@ -1,4 +1,4 @@
-package fi.kivibot.riotapi.rest;
+package fi.kivibot.rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
