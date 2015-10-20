@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -15,54 +16,44 @@ import java.util.Scanner;
  */
 public class RestClient {
 
-    public <T> RestResult<T> getJSON(String url, Class<T> type) throws MalformedURLException, IOException {
-        return getJSON(new URL(url), type);
+    private final String baseURL;
+
+    public RestClient(String baseURL) {
+        this.baseURL = baseURL;
     }
 
-    public <T> RestResult<T> getJSON(URL url, Class<T> type) throws IOException {
-        RestResult<String> result = get(url);
-        Gson gson = new GsonBuilder().create();
-        RestResult<T> ret = new RestResult<>(gson.fromJson(result.getValue(), type), result.getResponseCode());
-        return ret;
-    }
-
-    public <T> RestResult<T> getJSON(QueryBuilder url, Class<T> type) throws MalformedURLException, IOException {
-        return getJSON(url.build(), type);
-    }
-
-    public RestResult getJSON(String url, Type type) throws MalformedURLException, IOException {
-        return getJSON(new URL(url), type);
-    }
-
-    public RestResult getJSON(URL url, Type type) throws IOException {
-        RestResult<String> result = get(url);
-        Gson gson = new GsonBuilder().create();
-        RestResult ret = new RestResult<>(gson.fromJson(result.getValue(), type), result.getResponseCode());
-        return ret;
-    }
-
-    public RestResult getJSON(QueryBuilder url, Type type) throws MalformedURLException, IOException {
-        return getJSON(url.build(), type);
-    }
-
-    public RestResult<String> get(String url) throws MalformedURLException, IOException {
-        return get(new URL(url));
-    }
-
-    public RestResult<String> get(URL url) throws IOException {
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        ResponseCode code = ResponseCode.parseInteger(conn.getResponseCode());
-        String body = null;
-        if (code.isSuccess()) {
-            body = new Scanner(conn.getInputStream()).nextLine();
+    public RestResult<String> execute(RestRequest request) throws IOException {
+        URLBuilder builder = new URLBuilder();
+        builder.append(baseURL);
+        if (!baseURL.endsWith("/") || !request.getPath().startsWith("/")) {
+            builder.append("/");
         }
-        conn.getInputStream().close();
-        return new RestResult<>(body, code);
+        builder.append(request.getPath(), request.getSegments());
+        boolean first = true;
+        for (Map.Entry<String, String> e : request.getParams()) {
+            builder.append(first ? "?" : "&");
+            builder.appendEncoded(e.getKey()).append("=").appendEncoded(e.getValue());
+        }
+        HttpURLConnection conn = (HttpURLConnection) builder.build().openConnection();
+        conn.setRequestMethod(request.getMethod().name());
+        try {
+            conn.connect();
+            ResponseCode code = ResponseCode.parseInteger(conn.getResponseCode());
+            String body = null;
+            if (code.isSuccess()) {
+                body = new Scanner(conn.getInputStream()).nextLine();
+            }
+            return new RestResult<>(body, code);
+        } finally {
+            conn.getInputStream().close();
+        }
     }
 
-    public RestResult<String> get(QueryBuilder url) throws MalformedURLException, IOException {
-        return get(url.build());
+    public <T> RestResult<T> execute(RestRequest request, Class<T> type) throws IOException {
+        RestResult<String> result = execute(request);
+        Gson gson = new GsonBuilder().create();
+        RestResult<T> ret = new RestResult<>(gson.fromJson(result.getData(), type), result.getResponseCode());
+        return ret;
     }
 
 }

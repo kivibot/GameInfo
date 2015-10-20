@@ -5,8 +5,6 @@ import fi.kivibot.riotapi.constant.LeagueQueueType;
 import fi.kivibot.riotapi.constant.Region;
 import fi.kivibot.riotapi.exception.RateLimitException;
 import fi.kivibot.riotapi.exception.RiotException;
-import fi.kivibot.riotapi.rest.QueryBuilder;
-import fi.kivibot.riotapi.structures.current_game.CurrentGameInfo;
 import fi.kivibot.riotapi.structures.league.LeagueDto;
 import java.io.IOException;
 import java.util.Collection;

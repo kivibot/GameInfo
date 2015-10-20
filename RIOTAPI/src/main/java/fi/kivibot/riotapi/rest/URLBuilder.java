@@ -1,8 +1,11 @@
 package fi.kivibot.riotapi.rest;
 
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -10,16 +13,16 @@ import java.util.logging.Logger;
  *
  * @author Nicklas
  */
-public class QueryBuilder {
+public class URLBuilder {
 
     private StringBuilder sb = new StringBuilder();
 
-    public QueryBuilder append(String str) {
+    public URLBuilder append(String str) {
         sb.append(str);
         return this;
     }
 
-    public QueryBuilder appendEncoded(String str) {
+    public URLBuilder appendEncoded(String str) {
         try {
             return append(URLEncoder.encode(str, "utf-8"));
         } catch (UnsupportedEncodingException ex) {
@@ -27,22 +30,12 @@ public class QueryBuilder {
         }
     }
 
-    /**
-     * @see java.lang.Formatter
-     */
-    public QueryBuilder append(String format, String... params) {
-        for (int i = 0; i < params.length; i++) {
-            try {
-                format = format.replace("{" + i + "}", URLEncoder.encode(params[i], "utf-8"));
-            } catch (UnsupportedEncodingException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-        return append(format);
+    public URLBuilder append(String format, Map<String, String> params) {
+        return append(format, params.entrySet());
     }
 
-    public QueryBuilder append(String format, Map<String, Object> params) {
-        for (Map.Entry<String, Object> e : params.entrySet()) {
+    public URLBuilder append(String format, Set<Map.Entry<String, String>> params) {
+        for (Map.Entry<String, String> e : params) {
             try {
                 format = format.replace("{" + e.getKey() + "}", URLEncoder.encode(e.getValue().toString(), "utf-8"));
             } catch (UnsupportedEncodingException ex) {
@@ -52,8 +45,8 @@ public class QueryBuilder {
         return append(format);
     }
 
-    public String build() {
-        return sb.toString();
+    public URL build() throws MalformedURLException {
+        return new URL(sb.toString());
     }
 
 }

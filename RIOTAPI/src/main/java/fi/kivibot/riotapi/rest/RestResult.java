@@ -6,20 +6,22 @@ package fi.kivibot.riotapi.rest;
  */
 public class RestResult<T> {
 
-    private final T value;
+    private final T data;
     private final ResponseCode responseCode;
 
-    public RestResult(T value, ResponseCode responseCode) {
-        this.value = value;
+    public RestResult(T data, ResponseCode responseCode) {
+        this.data = data;
         this.responseCode = responseCode;
     }
 
-    public T getValue() {
-        return value;
+    public T getData() {
+        return data;
     }
 
     public ResponseCode getResponseCode() {
         return responseCode;
     }
+
+    
 
 }

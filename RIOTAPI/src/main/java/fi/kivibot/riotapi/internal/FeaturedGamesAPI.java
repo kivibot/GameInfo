@@ -3,7 +3,6 @@ package fi.kivibot.riotapi.internal;
 import fi.kivibot.riotapi.constant.Region;
 import fi.kivibot.riotapi.exception.RateLimitException;
 import fi.kivibot.riotapi.exception.RiotException;
-import fi.kivibot.riotapi.rest.QueryBuilder;
 import java.io.IOException;
 
 /**

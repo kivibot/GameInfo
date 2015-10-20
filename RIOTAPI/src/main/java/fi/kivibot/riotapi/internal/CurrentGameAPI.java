@@ -3,7 +3,8 @@ package fi.kivibot.riotapi.internal;
 import fi.kivibot.riotapi.constant.Region;
 import fi.kivibot.riotapi.exception.RateLimitException;
 import fi.kivibot.riotapi.exception.RiotException;
-import fi.kivibot.riotapi.rest.QueryBuilder;
+import fi.kivibot.riotapi.rest.RestClient;
+import fi.kivibot.riotapi.rest.RestRequest;
 import fi.kivibot.riotapi.structures.current_game.CurrentGameInfo;
 import java.io.IOException;
 
@@ -18,10 +19,13 @@ public class CurrentGameAPI extends APIBase {
     }
 
     public CurrentGameInfo getBySummoner(Region region, long id) throws IOException, RateLimitException, RiotException {
-        return get(CurrentGameInfo.class,
-                new QueryBuilder().append("https://{0}.api.pvp.net", region.getName())
-                .append("/observer-mode/rest/consumer/getSpectatorGameInfo/{0}/{1}", region.getPlatformId(), "" + id)
-                .append("?api_key={0}", apiKey));
+        RestClient client = new RestClient("");
+        RestRequest request = new RestRequest("https://{region}.api.pvp.net/observer-mode/rest/consumer/getSpectatorGameInfo/{platform}/{id}");
+        request.addUrlSegment("region", region.getName());
+        request.addUrlSegment("platform", region.getPlatformId());
+        request.addUrlSegment("id", id);
+        request.addParameter("api_key", apiKey);
+        return get(CurrentGameInfo.class, client, request);
     }
 
 }
